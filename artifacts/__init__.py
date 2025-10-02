@@ -1,0 +1,1 @@
+# This file makes the artifacts directory a Python package
