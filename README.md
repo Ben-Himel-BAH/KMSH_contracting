@@ -36,7 +36,7 @@ Your final submission must include the following components. You will use AI ass
    - [x] `Architecture Decision Records (ADR)` including auto-generated technical decisions with their justifications.
       - [x] Artifact Produced: convisoft_adr.md
 * **Backend Application:**
-   - [ ] A complete REST API project using **Python and FastAPI**.
+   - [x] A complete REST API project using **Python and FastAPI**.
       - [x] Create API framework (in memory API for concept test)
       - [x] Wire to database
    - [x] An AI-generated database schema (e.g., `schema.sql`).
@@ -45,7 +45,7 @@ Your final submission must include the following components. You will use AI ass
 * **Frontend Application:**
    - [ ] A **React** frontend that interacts with your backend API.
       - [x] Front end framework
-      - [x] wire to backend
+      - [ ] wire to backend
       - [ ] display graphs 
    - [x] At least one key component generated from a **design screenshot or mockup**.
 * **Final Presentation:**
