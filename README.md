@@ -26,7 +26,7 @@ Your final submission must include the following components. You will use AI ass
 * **Documentation:**
    Created convisoft.ipynb to produce all the artifacts below.
    - [X]  `Product Requirements Document (PRD)` generated from a high-level idea.
-         - [ ]  Artifact Produced: convisoft_prd.md
+         - [X]  Artifact Produced: convisoft_prd.md
    - [X]  `Architecture Document` including auto-generated UML diagrams (e.g., Component or Sequence diagrams).
           - [X] 'Produced following Artifact:
                  - [X] convisoft_architecture.md
