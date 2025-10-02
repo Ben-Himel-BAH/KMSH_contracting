@@ -327,7 +327,15 @@ from sqlalchemy.ext.declarative import declarative_base
 # 1. Define the database connection URL.
 #    For SQLite, it's "sqlite:///./your_database_name.db".
 #    The "./" means the file will be created in the current directory.
-SQLALCHEMY_DATABASE_URL = "sqlite:///./contracts.db"
+import os
+
+# Construct absolute path to database file
+db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'artifacts', 'convisoft.db')
+SQLALCHEMY_DATABASE_URL = f"sqlite:///{db_path}"
+
+# Debug: Print the database path (remove this after confirming it works)
+print(f"Database path: {db_path}")
+print(f"Database exists: {os.path.exists(db_path)}")
 
 # 2. Create the SQLAlchemy engine.
 #    The `connect_args` is needed only for SQLite to allow multithreading.
