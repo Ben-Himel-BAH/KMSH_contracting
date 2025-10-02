@@ -25,33 +25,33 @@ Your final submission must include the following components. You will use AI ass
 
 * **Documentation:**
    Created convisoft.ipynb to produce all the artifacts below.
-   - [X]  `Product Requirements Document (PRD)` generated from a high-level idea.
-         - [x]  Artifact Produced: convisoft_prd.md
-   - [X]  `Architecture Document` including auto-generated UML diagrams (e.g., Component or Sequence diagrams).
-          - [X] 'Produced following Artifact:
-                 - [X] convisoft_architecture.md
-                 - [X] convisoft_context_diagram.png
-                 - [X] convisoft_erd_diagram.png
-                 - [X] convisoft_sequence_diagram.png
-   - [X]  `Architecture Decision Records (ADR)` including auto-generated technical decisions with their justifications.
-           - [X] 'Artifact Produce: convisoft_adr.md'
+   - [x] `Product Requirements Document (PRD)` generated from a high-level idea.
+         - [x] Artifact Produced: convisoft_prd.md
+   - [x] `Architecture Document` including auto-generated UML diagrams (e.g., Component or Sequence diagrams).
+         - [x] Produced following Artifact:
+               - [x] convisoft_architecture.md
+               - [x] convisoft_context_diagram.png
+               - [x] convisoft_erd_diagram.png
+               - [x] convisoft_sequence_diagram.png
+   - [x] `Architecture Decision Records (ADR)` including auto-generated technical decisions with their justifications.
+         - [x] Artifact Produced: convisoft_adr.md
 * **Backend Application:**
-   - [ ]  A complete REST API project using **Python and FastAPI**.
-      - [X]  Create API framework (in memory API for concept test)
-      - [X]  Wire to database
-   - [X]  An AI-generated database schema (e.g., `schema.sql`).
-   - [ ]  A suite of **unit tests** generated with AI assistance.
-   - [ ]  A report or list of identified **security vulnerabilities**.
+   - [ ] A complete REST API project using **Python and FastAPI**.
+      - [x] Create API framework (in memory API for concept test)
+      - [x] Wire to database
+   - [x] An AI-generated database schema (e.g., `schema.sql`).
+   - [ ] A suite of **unit tests** generated with AI assistance.
+   - [ ] A report or list of identified **security vulnerabilities**.
 * **Frontend Application:**
-   - []  A **React** frontend that interacts with your backend API.
+   - [ ] A **React** frontend that interacts with your backend API.
       - [x] Front end framework
       - [x] wire to backend
       - [ ] display graphs 
-   - [X]  At least one key component generated from a **design screenshot or mockup**.
+   - [x] At least one key component generated from a **design screenshot or mockup**.
 * **Final Presentation:**
-   - [ ]  A **10-15 minute presentation** summarizing your project.
-   - [ ]  A **live demo** of your fully working front-end and back-end application.
+   - [ ] A **10-15 minute presentation** summarizing your project.
+   - [ ] A **live demo** of your fully working front-end and back-end application.
 * **AI Code:**
-   - [ ]  A **ipynb or py file(s)** containing the code you used to generate your artifacts.
+   - [ ] A **ipynb or py file(s)** containing the code you used to generate your artifacts.
 
 ---
