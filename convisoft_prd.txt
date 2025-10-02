@@ -1,0 +1,79 @@
+import sys
+import os
+import json
+import tqdm as notebook_tqdm
+
+# Add the project's root directory to the Python path to ensure 'utils' can be imported.
+try:
+    # Assumes the notebook is in 'labs/Day_01_.../'
+    project_root = os.path.abspath(os.path.join(os.getcwd(), '..', '..'))
+except IndexError:
+    # Fallback for different execution environments
+    project_root = os.path.abspath(os.path.join(os.getcwd()))
+
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+from utils import setup_llm_client, get_completion, save_artifact, clean_llm_output
+client, model_name, api_provider = setup_llm_client(model_name="gpt-4.1")
+
+app_name="Contracting Visualization Software"
+problem_statement = f"""
+Contracting Visualization Software is an AI-powered RESTful service application designed to help contracting companies.
+We need a tool that will do the following:
+1. View and explore historical data of contracts awarded by the US government through an insightful and
+    powerful dashboard with various visualizations.
+2. The application enables users to analyze trends, access contract details.
+3. Its primary focus is on data exploration, visualization, and reporting to support
+   strategicdecision-making based on awarded contract data.
+"""
+
+prd_prompt = f"""
+You are an expert AI-enabled product manager and enterprise architect.
+
+Your task is to create a comprehensive Product Requirements Document (PRD) based on the problem statement for the following system:
+
+Problem Statement: {problem_statement}
+System: "{app_name}"
+
+The PRD that includes:
+1. Executive Overview, Vision and Goals
+2. In-scope / Out-of-scope
+3. Personas
+4. Data Types: Contract Name, Company Awarded, Date Awarded, Location (where contract will be performed), Value of Contract, Length of Contract, Product or service information (NAICS and PSC categories) if available.
+5. User stories with story points and acceptance criteria: All acceptance criteria must be measurable and testable with HTTP codes, etc.
+6. Functional & non-functional requirements
+7. Goals and Success metrics
+8. Assumptions/constraints
+9. Error handling: Requirements include invalid input, server errors, etc.
+10. Dependencies
+11. Future considerations
+12. Milestones and timeline
+13. Security and compliance
+14. Error handling
+15. Glossary of terms
+16. Appendices
+17. References: sam.gov, GSA.gov, FPDS.gov
+
+Formatting requirements:
+- Use markdown formatting with appropriate headings and subheadings.
+- Include tables for personas and user stories.
+- Use bullet points for lists of requirements, goals, and other items.
+- Ensure clarity and conciseness in language.
+Make sure to cover all aspects of the system comprehensively.
+The PRD should be detailed and structured to guide the development team effectively.
+Use Markdown formatting with appropriate headings and subheadings.
+"""
+
+print("*" * 80)
+print("Generating PRD for", app_name)
+prd_from_template_output = get_completion(prd_prompt, client, model_name, api_provider)
+prd_from_template_output = clean_llm_output(prd_from_template_output)
+print(prd_from_template_output)
+if not prd_from_template_output:
+    raise ValueError("No PRD output generated")
+else:
+    save_artifact(prd_from_template_output, "artifacts/govwinsight3_prd.md",overwrite=True)
+    print("PRD generated successfully, saving to artifacts...")
+
+print("*" * 80)
