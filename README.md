@@ -1,12 +1,12 @@
 # KMSH_contracting
-Contracting Visualization Software
+## Contracting Visualization Software
 
 The Contracting Visualization Software is an AI-powered, RESTful service application designed to empower contracting companies with deep insights into historical US government contract awards. The platform will provide an interactive dashboard with robust data exploration, visualization, and reporting capabilities, enabling users to analyze trends, drill into contract details, and make strategic, data-driven decisions.
 
-Vision
+## Vision
 * To become the leading analytics and visualization platform for US government contract data, simplifying the discovery of actionable insights for contracting companies and leveling the playing field for market analysis and strategy.
 
-Goals
+## Goals
 * Provide seamless, user-friendly access to historical US government contract data.
 * Empower users to explore and visualize awarded contract data across multiple dimensions.
 * Enable trend analysis and detailed reporting for strategic planning.
@@ -19,7 +19,7 @@ The primary goal of this capstone is to **build and present a working prototype 
 
 ---
 
-##  deliverables Checklist
+##  Deliverables Checklist
 
 Your final submission must include the following components. You will use AI assistance to generate and refine each of these artifacts.
 
