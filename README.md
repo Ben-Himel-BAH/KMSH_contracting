@@ -26,15 +26,15 @@ Your final submission must include the following components. You will use AI ass
 * **Documentation:**
    Created convisoft.ipynb to produce all the artifacts below.
    - [x] `Product Requirements Document (PRD)` generated from a high-level idea.
-         - [x] Artifact Produced: convisoft_prd.md
+      - [x] Artifact Produced: convisoft_prd.md
    - [x] `Architecture Document` including auto-generated UML diagrams (e.g., Component or Sequence diagrams).
-         - [x] Produced following Artifact:
-               - [x] convisoft_architecture.md
-               - [x] convisoft_context_diagram.png
-               - [x] convisoft_erd_diagram.png
-               - [x] convisoft_sequence_diagram.png
+      - [x] Produced following Artifact:
+         - [x] convisoft_architecture.md
+         - [x] convisoft_context_diagram.png
+         - [x] convisoft_erd_diagram.png
+         - [x] convisoft_sequence_diagram.png
    - [x] `Architecture Decision Records (ADR)` including auto-generated technical decisions with their justifications.
-         - [x] Artifact Produced: convisoft_adr.md
+      - [x] Artifact Produced: convisoft_adr.md
 * **Backend Application:**
    - [ ] A complete REST API project using **Python and FastAPI**.
       - [x] Create API framework (in memory API for concept test)
