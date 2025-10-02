@@ -203,6 +203,18 @@ def read_root():
     """Root endpoint providing a welcome message."""
     return {"message": "Welcome to the Contracting Visualization API"}
 
+# Debug endpoint to check database
+@app.get("/debug", tags=["Debug"])
+def debug_db():
+    """Debug endpoint to check database contents."""
+    return {
+        "contracts_count": len(db["contracts"]),
+        "companies_count": len(db["companies"]),
+        "locations_count": len(db["locations"]),
+        "contracts_keys": list(db["contracts"].keys()),
+        "sample_contract": list(db["contracts"].values())[0] if db["contracts"] else None
+    }
+
 # --- Contracts Endpoints ---
 @app.get("/contracts", response_model=List[Contract], tags=["Contracts"])
 def list_contracts(
