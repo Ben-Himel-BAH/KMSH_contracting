@@ -1,51 +1,70 @@
 # Contracting Visualization Software - Design and Architecture Overview
 
-Welcome to the architecture overview for the Contracting Visualization Software (ConVisoft). This document provides a comprehensive summary of the system’s design, data model, core interactions, and technical decisions. Use this as a guide to understand the structure, dependencies, and flow of information throughout the application.
+## Introduction
+
+This document provides a comprehensive overview of the design and architecture for the Contracting Visualization Software project. It details the system's components, their interactions, and the supporting diagrams that illustrate the underlying structure and workflows. This guide serves as a reference for developers, stakeholders, and architects to understand the system's layout, responsibilities, and integration points.
 
 ---
 
-## Table of Contents
+## System Overview and Description
 
-- [System Diagrams](#system-diagrams)
-  - [ERD Diagram](#erd-diagram)
-  - [Context Diagram](#context-diagram)
-  - [Sequence Diagram](#sequence-diagram)
-- [Database Schema](#database-schema)
-- [Related Documentation](#related-documentation)
-- [Notes](#notes)
-- [Summary](#summary)
+The Contracting Visualization Software is a web-based platform designed to streamline the management, visualization, and analysis of contracts and related workflows. It enables users to upload, review, annotate, and track contracts throughout their lifecycle. The system integrates with external services, such as notification providers and document storage, to provide a seamless contracting experience. Core requirements include role-based access control, audit trails, and a robust data model to support complex contract relationships.
 
 ---
 
-## System Diagrams
+## Key Components and Their Roles
+
+- **Frontend (Web Application):**
+  - Provides an intuitive user interface for uploading, viewing, annotating, and managing contracts.
+  - Handles user authentication and authorization.
+  - Visualizes contract data and workflow status.
+
+- **Backend (API & Business Logic):**
+  - Exposes RESTful or GraphQL APIs for frontend consumption.
+  - Manages business logic, contract workflow states, and permissions.
+  - Connects to the data layer and external services.
+
+- **Database:**
+  - Stores contracts, users, workflow history, annotations, and metadata.
+  - Enforces data integrity and relationships.
+
+- **External Integrations:**
+  - **Document Storage:** For storing contract files securely (e.g., AWS S3, Azure Blob).
+  - **Notification Service:** Sends alerts or emails to stakeholders during workflow events.
+  - **Authentication Provider:** Handles user sign-in and identity management (e.g., OAuth, SAML).
+
+- **Admin & Audit Module:**
+  - Provides admin interfaces for managing users, roles, and access.
+  - Maintains audit logs for compliance and traceability.
+
+---
+
+## Architecture Diagrams
 
 ### ERD Diagram
 
 **Purpose:**  
-The Entity-Relationship Diagram (ERD) illustrates the core data entities, their attributes, and the relationships between them within ConVisoft. Use this diagram to understand how data is structured and how entities such as Users, Contracts, Projects, and Visualizations relate to one another.
+Illustrates the core data model, including entities (such as Contract, User, Workflow), their attributes, and the relationships between them. This diagram is essential for understanding data structure, integrity constraints, and normalization.
 
 ![ERD Diagram](./convisoft_erd_diagram.png)
-
 
 ---
 
 ### Context Diagram
 
 **Purpose:**  
-The Context Diagram provides a high-level view of ConVisoft’s interactions with external actors and systems. It identifies key interfaces such as external contract data providers, authentication services, and user roles, clarifying integration points and system boundaries.
+Shows the system's boundaries and its interactions with external entities (users, integration services, storage, etc.). This high-level view helps stakeholders understand the system's environment, interfaces, and dependencies.
 
 ![Context Diagram](./convisoft_context_diagram.png)
-
 
 ---
 
 ### Sequence Diagram
 
 **Purpose:**  
-The Sequence Diagram demonstrates the flow of messages and actions between major components during a typical user scenario (e.g., contract visualization request). It helps developers understand the order of operations and the responsibilities of each component in the system.
+Depicts a typical flow of messages and method calls between system components for a key use case (e.g., contract upload and approval). This visualization clarifies component responsibilities and the order of operations.
 
 ![Sequence Diagram](./convisoft_sequence_diagram.png)
-
 
 ---
 
@@ -194,31 +213,34 @@ CREATE INDEX idx_locations_country_code      ON locations(country_code);
 ```
 ---
 
-## Related Documentation
 
-- [Product Requirements Document (PRD)](./convisoft_prd.md)
-- [Architecture Decision Records (ADR)](./convisoft_adr.md)
+## Supporting Documentation
+
+- [Product Requirements Document (PRD)](./convisoft_prd.md)  
+  *Defines the business requirements, user stories, and acceptance criteria.*
+
+- [Architecture Decision Records (ADR)](./convisoft_adr.md)  
+  *Documents key architectural decisions, trade-offs, and rationale.*
 
 ---
 
 ## Notes
 
-- **Image Paths:**  
-  Ensure all image files (`.png`) and schema files (`.sql`) are located in the same directory as `architecture.md`.  
-  Adjust the paths if the directory structure is different.
+- **Diagram Files:**  
+  Ensure that `convisoft_erd_diagram.png`, `convisoft_context_diagram.png`, and `convisoft_sequence_diagram.png` are located in the same directory as `architecture.md`. Adjust paths if files are stored elsewhere.
 
 - **Viewing:**  
-  When using VS Code, GitHub, or other markdown viewers, images and links will render correctly if the referenced files exist and the paths are accurate.
+  When viewing in Visual Studio Code, GitHub, or compatible markdown viewers, images and links should render automatically if files and paths are correct.
 
-- **Updates:**  
-  Keep this documentation in sync with project evolution. Update diagrams and schema as the system changes.
+- **Schema Reference:**  
+  Refer to the ERD and accompanying schema documentation for details on database tables, fields, and relationships.
 
 ---
 
 ## Summary
 
-This architecture overview is designed to help both developers and stakeholders quickly understand how the Contracting Visualization Software is structured and how its main components interact. For a deeper dive, consult the linked PRD and ADR files, and refer to the included diagrams and schema for implementation details. If you have any questions or suggestions, please contact the architecture team or open an issue in the repository.
+This architecture overview provides a high-level yet comprehensive understanding of the Contracting Visualization Software system. By referencing the system’s components, key diagrams, and supporting documents, developers and stakeholders can quickly orient themselves and collaborate effectively. For further details or implementation specifics, consult the linked PRD, ADR, and schema resources.
 
 ---
 
-*End of Document*
+*For questions, context, or contributions, please refer to the linked documentation or contact the architecture team.*
