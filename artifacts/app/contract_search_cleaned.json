@@ -1,102 +1,32 @@
 [
   {
-    "ContractName": "Defense Contract 1",
+    "ContractName": "F-35 Production Contract Modification",
     "CompanyName": "Lockheed Martin",
-    "TotalContractValue": "$3.2 billion",
-    "DateAwarded": "2022-03-01",
-    "Location": "Bethesda, MD",
-    "LengthOfContract": "7 years",
-    "NAICS": "336414",
-    "PSC": "AC13"
+    "TotalContractValue": "$30 billion",
+    "DateAwarded": "January 2023",
+    "Location": "N/A",
+    "LengthOfContract": "N/A",
+    "NAICS": "336413",
+    "PSC": "K015"
   },
   {
-    "ContractName": "Space Exploration Program",
-    "CompanyName": "SpaceX",
-    "TotalContractValue": "$2.9 billion",
-    "DateAwarded": "2021-04-16",
-    "Location": "Hawthorne, CA",
-    "LengthOfContract": "5 years",
-    "NAICS": "541715",
-    "PSC": "AR15"
-  },
-  {
-    "ContractName": "Cybersecurity Enhancement",
-    "CompanyName": "Northrop Grumman",
-    "TotalContractValue": "$1 billion",
-    "DateAwarded": "2022-07-22",
-    "Location": "Falls Church, VA",
-    "LengthOfContract": "3 years",
-    "NAICS": "541512",
-    "PSC": "D399"
-  },
-  {
-    "ContractName": "Healthcare System Update",
-    "CompanyName": "General Dynamics",
-    "TotalContractValue": "$800 million",
-    "DateAwarded": "2023-01-15",
-    "Location": "Reston, VA",
-    "LengthOfContract": "4 years",
-    "NAICS": "541512",
-    "PSC": "D307"
-  },
-  {
-    "ContractName": "Advanced Missile Systems",
-    "CompanyName": "Raytheon",
-    "TotalContractValue": "$2.4 billion",
-    "DateAwarded": "2022-05-10",
-    "Location": "Waltham, MA",
-    "LengthOfContract": "6 years",
-    "NAICS": "336414",
-    "PSC": "1410"
-  },
-  {
-    "ContractName": "Naval Warfare Components",
-    "CompanyName": "Boeing",
-    "TotalContractValue": "$1.5 billion",
-    "DateAwarded": "2023-03-10",
-    "Location": "Chicago, IL",
-    "LengthOfContract": "5 years",
+    "ContractName": "CH-53K King Stallion Helicopters",
+    "CompanyName": "Sikorsky (Lockheed Martin)",
+    "TotalContractValue": "$10.86 billion",
+    "DateAwarded": "2023",
+    "Location": "N/A",
+    "LengthOfContract": "N/A",
     "NAICS": "336411",
-    "PSC": "1680"
+    "PSC": "1510"
   },
   {
-    "ContractName": "Infrastructure Development",
-    "CompanyName": "Bechtel Group",
-    "TotalContractValue": "$900 million",
-    "DateAwarded": "2021-11-08",
-    "Location": "Reston, VA",
-    "LengthOfContract": "8 years",
-    "NAICS": "236220",
-    "PSC": "Y1CZ"
-  },
-  {
-    "ContractName": "Defense Satellite Services",
-    "CompanyName": "L3Harris",
-    "TotalContractValue": "$1.1 billion",
-    "DateAwarded": "2022-09-25",
-    "Location": "Melbourne, FL",
-    "LengthOfContract": "4 years",
-    "NAICS": "334220",
-    "PSC": "5820"
-  },
-  {
-    "ContractName": "Public Health Disaster Relief",
-    "CompanyName": "McKesson Corporation",
-    "TotalContractValue": "$500 million",
-    "DateAwarded": "2023-06-15",
-    "Location": "Irving, TX",
-    "LengthOfContract": "2 years",
-    "NAICS": "424210",
-    "PSC": "Q999"
-  },
-  {
-    "ContractName": "Federal IT Modernization",
-    "CompanyName": "Accenture",
-    "TotalContractValue": "$1.3 billion",
-    "DateAwarded": "2021-08-30",
-    "Location": "Arlington, VA",
-    "LengthOfContract": "5 years",
-    "NAICS": "541512",
-    "PSC": "D399"
+    "ContractName": "Coyote Missile System",
+    "CompanyName": "Raytheon Technologies",
+    "TotalContractValue": "$5.04 billion",
+    "DateAwarded": "2023",
+    "Location": "N/A",
+    "LengthOfContract": "N/A",
+    "NAICS": "332994",
+    "PSC": "NA"
   }
 ]
