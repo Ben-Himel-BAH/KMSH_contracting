@@ -353,7 +353,7 @@ export default function Dashboard() {
                 System Overview
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Key metrics showing the current state of the contracting system.
+                Key metrics showing the number of contracts, companies, and locations.
               </Typography>
               <Box sx={{ mt: 2 }}>
                 <Typography variant="body1" sx={{ mb: 1 }}>
@@ -464,10 +464,10 @@ export default function Dashboard() {
                   };
                 })} 
                 columns={columns}
-                pageSizeOptions={[5, 10, 25]}
+                pageSizeOptions={[10, 25, 50, 100]}
                 initialState={{
                   pagination: {
-                    paginationModel: { pageSize: 10, page: 0 },
+                    paginationModel: { pageSize: 50, page: 0 },
                   },
                 }}
               />
