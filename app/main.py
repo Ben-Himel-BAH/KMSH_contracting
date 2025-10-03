@@ -1,6 +1,7 @@
 # main.py
 import uvicorn
 from fastapi import FastAPI, HTTPException, Query, status, Body, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, HttpUrl
 from typing import List, Optional, Annotated
 from datetime import date, datetime
@@ -15,6 +16,20 @@ app = FastAPI(
     title="Contracting Visualization API",
     description="An API for exploring and analyzing US government contract data.",
     version="1.0.0",
+)
+
+# Add CORS middleware to allow requests from React frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",    # Create React App default
+        "http://localhost:5173",    # Vite default
+        "http://127.0.0.1:3000", 
+        "http://127.0.0.1:5173"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
 )
 
 # Create database tables on startup
@@ -461,7 +476,19 @@ def delete_user(user_id: int, db_session: Session = Depends(get_db)):
 def list_contracts(db_session: Session = Depends(get_db)):
     """List all contracts using SQLAlchemy."""
     contracts = db_session.query(ContractModel).all()
-    return [{"contract_id": c.contract_id, "contract_number": c.contract_number, "title": c.title} for c in contracts]
+    return [{
+        "contract_id": c.contract_id, 
+        "contract_number": c.contract_number, 
+        "title": c.title,
+        "company_id": c.company_id,
+        "total_value": float(c.total_value) if c.total_value else 0,
+        "date_awarded": c.date_awarded,
+        "place_of_performance_location_id": c.place_of_performance_location_id,
+        "start_date": c.start_date,
+        "end_date": c.end_date,
+        "description": c.description,
+        "total_obligated": float(c.total_obligated) if c.total_obligated else None
+    } for c in contracts]
 
 @app.post("/contracts/", response_model=dict, status_code=status.HTTP_201_CREATED, tags=["Contracts"])
 def create_contract(
