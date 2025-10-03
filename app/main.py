@@ -525,7 +525,17 @@ def create_contract(
 def list_companies(db_session: Session = Depends(get_db)):
     """List all companies using SQLAlchemy."""
     companies = db_session.query(CompanyModel).all()
-    return [{"company_id": c.company_id, "legal_name": c.legal_name} for c in companies]
+    return [{
+        "company_id": c.company_id, 
+        "legal_name": c.legal_name,
+        "duns_number": c.duns_number,
+        "cage_code": c.cage_code,
+        "website_url": c.website_url,
+        "founded_date": c.founded_date,
+        "primary_location_id": c.primary_location_id,
+        "created_at": c.created_at,
+        "updated_at": c.updated_at
+    } for c in companies]
 
 @app.post("/companies/", response_model=dict, status_code=status.HTTP_201_CREATED, tags=["Companies"])
 def create_company(legal_name: str, db_session: Session = Depends(get_db)):
