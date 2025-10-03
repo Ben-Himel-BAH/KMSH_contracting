@@ -32,6 +32,7 @@ The rationale for choosing the Contracting Visualization Software is to provide 
 - **Scalability and Extensibility**  
   Built with modern frameworks (FastAPI, React, PostgreSQL) and supports future enhancements (e.g., SAML, advanced analytics).
   
+---
 
 ## 🎯 Project Goal
 
