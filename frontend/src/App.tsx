@@ -30,8 +30,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
-import PeopleIcon from "@mui/icons-material/People";
-import SettingsIcon from "@mui/icons-material/Settings";
 
 const drawerWidth = 200;
 
@@ -46,6 +44,7 @@ export default function Dashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<string>('Home');
 
   // State for chart data
   const [barData, setBarData] = useState<ChartData[]>([]);
@@ -300,42 +299,409 @@ export default function Dashboard() {
       <Toolbar />
       <Divider sx={{ bgcolor: "#fff" }} />
       <List>
-        <ListItemButton>
+        <ListItemButton selected={currentPage === 'Home'} onClick={() => setCurrentPage('Home')}>
           <ListItemIcon sx={{ color: "#fff" }}>
             <HomeIcon />
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItemButton>
 
-        <ListItemButton>
+        <ListItemButton selected={currentPage === 'Reports'} onClick={() => setCurrentPage('Reports')}>
           <ListItemIcon sx={{ color: "#fff" }}>
             <AssessmentIcon />
           </ListItemIcon>
           <ListItemText primary="Reports" />
         </ListItemButton>
 
-        <ListItemButton>
+        <ListItemButton selected={currentPage === 'Analytics'} onClick={() => setCurrentPage('Analytics')}>
           <ListItemIcon sx={{ color: "#fff" }}>
             <AnalyticsIcon />
           </ListItemIcon>
           <ListItemText primary="Analytics" />
         </ListItemButton>
-
-        <ListItemButton>
-          <ListItemIcon sx={{ color: "#fff" }}>
-            <PeopleIcon />
-          </ListItemIcon>
-          <ListItemText primary="Users" />
-        </ListItemButton>
-
-        <ListItemButton>
-          <ListItemIcon sx={{ color: "#fff" }}>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Settings" />
-        </ListItemButton>
       </List>
     </Box>
+  );
+
+  // Render functions for different pages
+  const renderHomePage = () => (
+    <>
+      {/* Home Page Header */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          Contract Analytics Dashboard - Home
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Overview of companies, contract statistics, and key financial metrics.
+        </Typography>
+      </Box>
+
+      {/* Top Row: Bar Chart and Summary Cards */}
+      <Grid container spacing={3} mb={4}>
+        {/* Bar Chart */}
+        <Grid item xs={12} lg={8}>
+          <Card sx={{ p: 3, height: 400 }}>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="h5" gutterBottom>
+                Top Companies by Contract Count
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Ranking of companies based on the total number of active contracts.
+              </Typography>
+            </Box>
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={barData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#1976d2" />
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
+        </Grid>
+
+        {/* Summary Cards */}
+        <Grid item xs={12} lg={4}>
+          <Grid container spacing={3} direction="column">
+            <Grid item>
+              <Card sx={{ p: 3, height: 190 }}>
+                <Typography variant="h6" gutterBottom>
+                  System Overview
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  Key metrics showing the current state of the contracting system.
+                </Typography>
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Total Contracts:</strong> {contracts.length}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Total Companies:</strong> {companies.length}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Total Locations:</strong> {locations.length}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Active Users:</strong> {users.length}
+                  </Typography>
+                </Box>
+              </Card>
+            </Grid>
+
+            <Grid item>
+              <Card sx={{ p: 3, height: 190 }}>
+                <Typography variant="h6" gutterBottom>
+                  Financial Summary
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  Contract value analysis and financial metrics.
+                </Typography>
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Total Value:</strong> ${contracts.reduce((sum, contract) => sum + Number(contract.total_value), 0).toLocaleString()}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Average Contract:</strong> ${contracts.length > 0 ? (contracts.reduce((sum, contract) => sum + Number(contract.total_value), 0) / contracts.length).toLocaleString() : '0'}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Largest Contract:</strong> ${contracts.length > 0 ? Math.max(...contracts.map(c => Number(c.total_value))).toLocaleString() : '0'}
+                  </Typography>
+                </Box>
+              </Card>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+
+      {/* Bottom Row: Companies Database (Full Width) */}
+      <Grid container spacing={3}>
+        {/* Companies Database */}
+        <Grid item xs={12}>
+          <Card sx={{ height: 500 }}>
+            <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
+              <Typography variant="h5" gutterBottom>
+                Companies Database
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Complete database of registered companies with detailed information.
+              </Typography>
+              <Typography variant="subtitle2" sx={{ mt: 1 }}>
+                Total Companies: {companies.length}
+              </Typography>
+            </Box>
+            <Box sx={{ height: 400 }}>
+              <DataGrid 
+                rows={companies.map(company => ({
+                  ...company,
+                  id: company.company_id
+                }))} 
+                columns={columns}
+                pageSizeOptions={[5, 10, 25]}
+                initialState={{
+                  pagination: {
+                    paginationModel: { pageSize: 10, page: 0 },
+                  },
+                }}
+              />
+            </Box>
+          </Card>
+        </Grid>
+      </Grid>
+    </>
+  );
+
+  const renderReportsPage = () => (
+    <>
+      {/* Reports Page Header */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          Contract Analytics Dashboard - Reports
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Geographic analysis of contract awards and values by state.
+        </Typography>
+      </Box>
+
+      {/* Pie Charts Row */}
+      <Grid container spacing={3} mb={4}>
+        <Grid item xs={12} md={6}>
+          <Card sx={{ p: 4, height: 550 }}>
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Contract Awards by State
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                States where contract work is being performed. Larger segments indicate states with more active contracts.
+              </Typography>
+            </Box>
+            <Box 
+              display="flex" 
+              flexDirection="column" 
+              alignItems="center" 
+              sx={{ 
+                height: 430,
+                overflow: 'visible',
+                padding: '30px',
+                margin: '-15px'
+              }}
+            >
+              <Box sx={{ 
+                width: '100%', 
+                height: '100%', 
+                display: 'flex', 
+                justifyContent: 'center',
+                overflow: 'visible'
+              }}>
+                <PieChart width={500} height={400} margin={{ top: 30, right: 80, bottom: 80, left: 80 }}>
+                  <Pie 
+                    data={pieData} 
+                    dataKey="value" 
+                    nameKey="name"
+                    cx="50%" 
+                    cy="45%" 
+                    outerRadius={90} 
+                    fill="#8884d8" 
+                    label={({ name, value, percent }) => 
+                      `${name}: ${value} (${((percent as number) * 100).toFixed(1)}%)`
+                    }
+                    labelLine={true}
+                  >
+                    {pieData.map((_, index) => (
+                      <Cell
+                        key={`cell1-${index}`}
+                        fill={["#1976d2", "#2196f3", "#03dac6", "#ff9800", "#e91e63", "#9c27b0"][index % 6]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    formatter={(value, name) => [
+                      `${value} contracts`, 
+                      `${name} State`
+                    ]}
+                  />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={60}
+                    formatter={(value) => `${value}`}
+                    wrapperStyle={{ fontSize: '12px', paddingTop: '15px' }}
+                  />
+                </PieChart>
+              </Box>
+              {pieData.length > 0 && (
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Top State: {pieData[0]?.name} ({pieData[0]?.value} contracts)
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Card sx={{ p: 4, height: 550 }}>
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Contract Value by State
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Total dollar value of contracts by state performance location (in millions USD).
+              </Typography>
+            </Box>
+            <Box 
+              display="flex" 
+              flexDirection="column" 
+              alignItems="center" 
+              sx={{ 
+                height: 430,
+                overflow: 'visible',
+                padding: '30px',
+                margin: '-15px'
+              }}
+            >
+              <Box sx={{ 
+                width: '100%', 
+                height: '100%', 
+                display: 'flex', 
+                justifyContent: 'center',
+                overflow: 'visible'
+              }}>
+                <PieChart width={500} height={400} margin={{ top: 30, right: 80, bottom: 80, left: 80 }}>
+                  <Pie 
+                    data={pieValueData} 
+                    dataKey="value" 
+                    nameKey="name"
+                    cx="50%" 
+                    cy="45%" 
+                    outerRadius={90} 
+                    fill="#82ca9d" 
+                    label={({ name, value, percent }) => 
+                      `${name}: $${value}M (${((percent as number) * 100).toFixed(1)}%)`
+                    }
+                    labelLine={true}
+                  >
+                    {pieValueData.map((_, index) => (
+                      <Cell
+                        key={`cell2-${index}`}
+                        fill={["#4caf50", "#8bc34a", "#cddc39", "#ffeb3b", "#ffc107", "#ff9800"][index % 6]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    formatter={(value, name) => [
+                      `$${value} million`, 
+                      `${name} State`
+                    ]}
+                  />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={60}
+                    formatter={(value) => `${value}`}
+                    wrapperStyle={{ fontSize: '12px', paddingTop: '15px' }}
+                  />
+                </PieChart>
+              </Box>
+              {pieValueData.length > 0 && (
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Highest Value: {pieValueData[0]?.name} (${pieValueData[0]?.value}M)
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          </Card>
+        </Grid>
+      </Grid>
+    </>
+  );
+
+  const renderAnalyticsPage = () => (
+    <>
+      {/* Analytics Page Header */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          Contract Analytics Dashboard - Analytics
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Advanced performance metrics and risk assessment analytics.
+        </Typography>
+      </Box>
+
+      {/* Radar Charts Row */}
+      <Grid container spacing={3} mb={4}>
+        <Grid item xs={12} md={6}>
+          <Card sx={{ p: 3 }}>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                Contract Performance Metrics
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Current performance across key contracting dimensions including volume, activity, value distribution, and geographic reach.
+              </Typography>
+            </Box>
+            <Box display="flex" justifyContent="center">
+              <RadarChart
+                width={300}
+                height={250}
+                series={[
+                  { label: "Current", data: radarData.map((d) => d.A), color: "#1976d2" },
+                  { label: "Target", data: radarData.map((d) => d.B), color: "#ff9800" },
+                ]}
+                radar={{ metrics: radarData.map((d) => d.subject) }}
+              />
+            </Box>
+          </Card>
+        </Grid>
+        
+        <Grid item xs={12} md={6}>
+          <Card sx={{ p: 3 }}>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                Risk Assessment Dashboard
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Risk analysis across contract health, financial stability, compliance rates, and performance trends.
+              </Typography>
+            </Box>
+            <Box display="flex" justifyContent="center">
+              <RadarChart
+                width={300}
+                height={250}
+                series={[
+                  { label: "Current", data: riskData.map((d) => d.A), color: "#4caf50" },
+                  { label: "Target", data: riskData.map((d) => d.B), color: "#e91e63" },
+                ]}
+                radar={{ metrics: riskData.map((d) => d.subject) }}
+              />
+            </Box>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Timeline Chart */}
+      <Grid container spacing={3} mb={4}>
+        <Grid item xs={12}>
+          <Card sx={{ p: 3 }}>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="h5" gutterBottom>
+                Contract Awards Timeline
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Historical trend of contract awards by year, showing the volume of government contracting activity over time.
+              </Typography>
+            </Box>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={lineData}>
+                <XAxis dataKey="year" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={3} dot={true} />
+              </LineChart>
+            </ResponsiveContainer>
+          </Card>
+        </Grid>
+      </Grid>
+    </>
   );
 
   return (
@@ -425,352 +791,10 @@ export default function Dashboard() {
           {/* Dashboard Content - Only show when not loading and no error */}
           {!loading && !error && (
             <>
-              {/* Dashboard Header */}
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h4" gutterBottom>
-                  Contract Analytics Dashboard
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  Real-time insights into government contracting data including company performance, contract distribution, and trends over time.
-                </Typography>
-              </Box>
-
-              {/* Top Row: Bar Chart (Full Width) */}
-              <Grid container spacing={3} mb={4}>
-                <Grid item xs={12}>
-                  <Card sx={{ p: 3 }}>
-                    <Box sx={{ mb: 2 }}>
-                      <Typography variant="h5" gutterBottom>
-                        Top Companies by Contract Count
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Ranking of companies based on the total number of active contracts. This metric shows which contractors are most active in government procurement.
-                      </Typography>
-                    </Box>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={barData}>
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Bar dataKey="value" fill="#1976d2" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Card>
-                </Grid>
-              </Grid>
-
-              {/* Second Row: Performance Metrics */}
-              <Grid container spacing={3} mb={4}>
-                <Grid item xs={12} md={6}>
-                  <Card sx={{ p: 3 }}>
-                    <Box sx={{ mb: 2 }}>
-                      <Typography variant="h6" gutterBottom>
-                        Contract Performance Metrics
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Current performance across key contracting dimensions including volume, activity, value distribution, and geographic reach.
-                      </Typography>
-                    </Box>
-                    <Box display="flex" justifyContent="center">
-                      <RadarChart
-                        width={300}
-                        height={250}
-                        series={[
-                          { label: "Current", data: radarData.map((d) => d.A), color: "#1976d2" },
-                          { label: "Target", data: radarData.map((d) => d.B), color: "#ff9800" },
-                        ]}
-                        radar={{ metrics: radarData.map((d) => d.subject) }}
-                      />
-                    </Box>
-                  </Card>
-                </Grid>
-                
-                <Grid item xs={12} md={6}>
-                  <Card sx={{ p: 3 }}>
-                    <Box sx={{ mb: 2 }}>
-                      <Typography variant="h6" gutterBottom>
-                        Risk Assessment Dashboard
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Risk analysis across contract health, financial stability, compliance rates, and performance trends.
-                      </Typography>
-                    </Box>
-                    <Box display="flex" justifyContent="center">
-                      <RadarChart
-                        width={300}
-                        height={250}
-                        series={[
-                          { label: "Current", data: riskData.map((d) => d.A), color: "#4caf50" },
-                          { label: "Target", data: riskData.map((d) => d.B), color: "#e91e63" },
-                        ]}
-                        radar={{ metrics: riskData.map((d) => d.subject) }}
-                      />
-                    </Box>
-                  </Card>
-                </Grid>
-              </Grid>
-
-              {/* Third Row: Distribution Charts (50% width each) */}
-              <Grid container spacing={3} mb={4}>
-                <Grid item xs={12} md={6}>
-                  <Card sx={{ p: 4, height: 550 }}>
-                    <Box sx={{ mb: 3 }}>
-                      <Typography variant="h6" gutterBottom>
-                        Contract Awards by State
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        States where contract work is being performed. Larger segments indicate states with more active contracts.
-                      </Typography>
-                    </Box>
-                    <Box 
-                      display="flex" 
-                      flexDirection="column" 
-                      alignItems="center" 
-                      sx={{ 
-                        height: 430,
-                        overflow: 'visible',
-                        padding: '30px',
-                        margin: '-15px'
-                      }}
-                    >
-                      <Box sx={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        display: 'flex', 
-                        justifyContent: 'center',
-                        overflow: 'visible'
-                      }}>
-                        <PieChart width={500} height={400} margin={{ top: 30, right: 80, bottom: 80, left: 80 }}>
-                          <Pie 
-                            data={pieData} 
-                            dataKey="value" 
-                            nameKey="name"
-                            cx="50%" 
-                            cy="45%" 
-                            outerRadius={90} 
-                            fill="#8884d8" 
-                            label={({ name, value, percent }) => 
-                              `${name}: ${value} (${(percent * 100).toFixed(1)}%)`
-                            }
-                            labelLine={true}
-                          >
-                            {pieData.map((entry, index) => (
-                              <Cell
-                                key={`cell1-${index}`}
-                                fill={["#1976d2", "#2196f3", "#03dac6", "#ff9800", "#e91e63", "#9c27b0"][index % 6]}
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip 
-                            formatter={(value, name) => [
-                              `${value} contracts`, 
-                              `${name} State`
-                            ]}
-                          />
-                          <Legend 
-                            verticalAlign="bottom" 
-                            height={60}
-                            formatter={(value) => `${value}`}
-                            wrapperStyle={{ fontSize: '12px', paddingTop: '15px' }}
-                          />
-                        </PieChart>
-                      </Box>
-                      {pieData.length > 0 && (
-                        <Box sx={{ mt: 2, textAlign: 'center' }}>
-                          <Typography variant="caption" color="text.secondary">
-                            Top State: {pieData[0]?.name} ({pieData[0]?.value} contracts)
-                          </Typography>
-                        </Box>
-                      )}
-                    </Box>
-                  </Card>
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <Card sx={{ p: 4, height: 550 }}>
-                    <Box sx={{ mb: 3 }}>
-                      <Typography variant="h6" gutterBottom>
-                        Contract Value by State
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Total dollar value of contracts by state performance location (in millions USD).
-                      </Typography>
-                    </Box>
-                    <Box 
-                      display="flex" 
-                      flexDirection="column" 
-                      alignItems="center" 
-                      sx={{ 
-                        height: 430,
-                        overflow: 'visible',
-                        padding: '30px',
-                        margin: '-15px'
-                      }}
-                    >
-                      <Box sx={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        display: 'flex', 
-                        justifyContent: 'center',
-                        overflow: 'visible'
-                      }}>
-                        <PieChart width={500} height={400} margin={{ top: 30, right: 80, bottom: 80, left: 80 }}>
-                          <Pie 
-                            data={pieValueData} 
-                            dataKey="value" 
-                            nameKey="name"
-                            cx="50%" 
-                            cy="45%" 
-                            outerRadius={90} 
-                            fill="#82ca9d" 
-                            label={({ name, value, percent }) => 
-                              `${name}: $${value}M (${(percent * 100).toFixed(1)}%)`
-                            }
-                            labelLine={true}
-                          >
-                            {pieValueData.map((entry, index) => (
-                              <Cell
-                                key={`cell2-${index}`}
-                                fill={["#4caf50", "#8bc34a", "#cddc39", "#ffeb3b", "#ffc107", "#ff9800"][index % 6]}
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip 
-                            formatter={(value, name) => [
-                              `$${value} million`, 
-                              `${name} State`
-                            ]}
-                          />
-                          <Legend 
-                            verticalAlign="bottom" 
-                            height={60}
-                            formatter={(value) => `${value}`}
-                            wrapperStyle={{ fontSize: '12px', paddingTop: '15px' }}
-                          />
-                        </PieChart>
-                      </Box>
-                      {pieValueData.length > 0 && (
-                        <Box sx={{ mt: 2, textAlign: 'center' }}>
-                          <Typography variant="caption" color="text.secondary">
-                            Highest Value: {pieValueData[0]?.name} (${pieValueData[0]?.value}M)
-                          </Typography>
-                        </Box>
-                      )}
-                    </Box>
-                  </Card>
-                </Grid>
-              </Grid>
-
-              {/* Fourth Row: Timeline Chart */}
-              <Grid container spacing={3} mb={4}>
-                <Grid item xs={12}>
-                  <Card sx={{ p: 3 }}>
-                    <Box sx={{ mb: 2 }}>
-                      <Typography variant="h5" gutterBottom>
-                        Contract Awards Timeline
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Historical trend of contract awards by year, showing the volume of government contracting activity over time. Helps identify seasonal patterns and growth trends.
-                      </Typography>
-                    </Box>
-                    <ResponsiveContainer width="100%" height={200}>
-                      <LineChart data={lineData}>
-                        <XAxis dataKey="year" />
-                        <YAxis />
-                        <Tooltip />
-                        <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={3} dot={true} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </Card>
-                </Grid>
-              </Grid>
-
-              {/* Fifth Row: Data Tables and Statistics */}
-              <Grid container spacing={3}>
-                {/* Left Section - Company Database */}
-                <Grid item xs={12} lg={8}>
-                  <Card sx={{ height: 500 }}>
-                    <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
-                      <Typography variant="h5" gutterBottom>
-                        Companies Database
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Complete database of registered companies with detailed information including DUNS numbers, CAGE codes, and contact details. Use the search and filter options to find specific contractors.
-                      </Typography>
-                      <Typography variant="subtitle2" sx={{ mt: 1 }}>
-                        Total Companies: {companies.length}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ height: 400 }}>
-                      <DataGrid 
-                        rows={companies.map(company => ({
-                          ...company,
-                          id: company.company_id // DataGrid requires 'id' field
-                        }))} 
-                        columns={columns}
-                        pageSizeOptions={[5, 10, 25]}
-                        initialState={{
-                          pagination: {
-                            paginationModel: { pageSize: 10, page: 0 },
-                          },
-                        }}
-                      />
-                    </Box>
-                  </Card>
-                </Grid>
-
-                {/* Right Section - Summary Statistics */}
-                <Grid item xs={12} lg={4}>
-                  <Grid container spacing={3} direction="column">
-                    <Grid item>
-                      <Card sx={{ p: 3 }}>
-                        <Typography variant="h6" gutterBottom>
-                          System Overview
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                          Key metrics showing the current state of the contracting system.
-                        </Typography>
-                        <Box sx={{ mt: 2 }}>
-                          <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Total Contracts:</strong> {contracts.length}
-                          </Typography>
-                          <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Total Companies:</strong> {companies.length}
-                          </Typography>
-                          <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Total Locations:</strong> {locations.length}
-                          </Typography>
-                          <Typography variant="body1">
-                            <strong>Active Users:</strong> {users.length}
-                          </Typography>
-                        </Box>
-                      </Card>
-                    </Grid>
-
-                    <Grid item>
-                      <Card sx={{ p: 3 }}>
-                        <Typography variant="h6" gutterBottom>
-                          Financial Summary
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                          Contract value analysis and financial metrics across all active contracts.
-                        </Typography>
-                        <Box sx={{ mt: 2 }}>
-                          <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Total Value:</strong> ${contracts.reduce((sum, contract) => sum + Number(contract.total_value), 0).toLocaleString()}
-                          </Typography>
-                          <Typography variant="body1" sx={{ mb: 1 }}>
-                            <strong>Average Contract:</strong> ${contracts.length > 0 ? (contracts.reduce((sum, contract) => sum + Number(contract.total_value), 0) / contracts.length).toLocaleString() : '0'}
-                          </Typography>
-                          <Typography variant="body1">
-                            <strong>Largest Contract:</strong> ${contracts.length > 0 ? Math.max(...contracts.map(c => Number(c.total_value))).toLocaleString() : '0'}
-                          </Typography>
-                        </Box>
-                      </Card>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
+              {/* Conditional Page Rendering */}
+              {currentPage === 'Home' && renderHomePage()}
+              {currentPage === 'Reports' && renderReportsPage()}
+              {currentPage === 'Analytics' && renderAnalyticsPage()}
             </>
           )}
         </Box>
