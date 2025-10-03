@@ -40,7 +40,7 @@ Your final submission must include the following components. You will use AI ass
       - [x] Create API framework (in memory API for concept test)
       - [x] Wire to database
    - [x] An AI-generated database schema (e.g., `schema.sql`).
-   - [ ] A suite of **unit tests** generated with AI assistance.
+   - [x] A suite of **unit tests** generated with AI assistance.
    - [ ] A report or list of identified **security vulnerabilities**.
 * **Frontend Application:**
    - [ ] A **React** frontend that interacts with your backend API.
