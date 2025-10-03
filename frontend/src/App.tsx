@@ -98,10 +98,10 @@ export default function Dashboard() {
     const companyContractCounts = companiesData.map(company => {
       const contractCount = contractsData.filter(contract => contract.company_id === company.company_id).length;
       return {
-        name: company.legal_name.length > 15 ? company.legal_name.substring(0, 15) + '...' : company.legal_name,
+        name: company.legal_name.length > 12 ? company.legal_name.substring(0, 12) + '...' : company.legal_name,
         value: contractCount
       };
-    }).sort((a, b) => b.value - a.value).slice(0, 5);
+    }).sort((a, b) => b.value - a.value).slice(0, 10);
 
     setBarData(companyContractCounts);
 
@@ -284,10 +284,17 @@ export default function Dashboard() {
   // DataGrid columns for companies
   const columns: GridColDef[] = [
     { field: "company_id", headerName: "ID", width: 70 },
-    { field: "legal_name", headerName: "Company Name", width: 250 },
-    { field: "duns_number", headerName: "DUNS Number", width: 150 },
-    { field: "cage_code", headerName: "CAGE Code", width: 150 },
-    { field: "website_url", headerName: "Website", width: 200 },
+    { field: "legal_name", headerName: "Company Name", width: 200 },
+    { field: "duns_number", headerName: "DUNS Number", width: 120 },
+    { field: "cage_code", headerName: "CAGE Code", width: 100 },
+    { field: "founded_date", headerName: "Founded", width: 100 },
+    { field: "headquarters", headerName: "Headquarters", width: 150 },
+    { field: "contract_count", headerName: "Total Contracts", width: 120 },
+    { field: "total_value", headerName: "Total Value", width: 130 },
+    { field: "avg_value", headerName: "Avg Value", width: 120 },
+    { field: "first_contract", headerName: "First Contract", width: 120 },
+    { field: "last_contract", headerName: "Last Contract", width: 120 },
+    { field: "website_url", headerName: "Website", flex: 1, minWidth: 200 },
   ];
 
   const handleDrawerToggle = () => {
@@ -336,11 +343,56 @@ export default function Dashboard() {
         </Typography>
       </Box>
 
-      {/* Top Row: Bar Chart and Summary Cards */}
-      <Grid container spacing={3} mb={4}>
-        {/* Bar Chart */}
-        <Grid item xs={12} lg={8}>
-          <Card sx={{ p: 3, height: 400 }}>
+      {/* Top Row: Summary Cards and Bar Chart */}
+      <Box sx={{ display: 'flex', gap: 3, mb: 4, width: '100%' }}>
+        {/* Summary Cards - Adequate width for content */}
+        <Box sx={{ flexShrink: 0, width: '400px' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <Card sx={{ p: 3, height: 230 }}>
+              <Typography variant="h6" gutterBottom>
+                System Overview
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Key metrics showing the current state of the contracting system.
+              </Typography>
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  <strong>Total Contracts:</strong> {contracts.length}
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  <strong>Total Companies:</strong> {companies.length}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Total Locations:</strong> {locations.length}
+                </Typography>
+              </Box>
+            </Card>
+
+            <Card sx={{ p: 3, height: 230 }}>
+              <Typography variant="h6" gutterBottom>
+                Financial Summary
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Contract value analysis and financial metrics.
+              </Typography>
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="body1" sx={{ mb: 1, fontSize: '0.9rem' }}>
+                  <strong>Total Value:</strong> ${contracts.reduce((sum, contract) => sum + Number(contract.total_value), 0).toLocaleString()}
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1, fontSize: '0.9rem' }}>
+                  <strong>Average Contract:</strong> ${contracts.length > 0 ? (contracts.reduce((sum, contract) => sum + Number(contract.total_value), 0) / contracts.length).toLocaleString() : '0'}
+                </Typography>
+                <Typography variant="body1" sx={{ fontSize: '0.9rem' }}>
+                  <strong>Largest Contract:</strong> ${contracts.length > 0 ? Math.max(...contracts.map(c => Number(c.total_value))).toLocaleString() : '0'}
+                </Typography>
+              </Box>
+            </Card>
+          </Box>
+        </Box>
+
+        {/* Bar Chart - Take remaining space */}
+        <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+          <Card sx={{ p: 3, height: 480, width: '100%' }}>
             <Box sx={{ mb: 2 }}>
               <Typography variant="h5" gutterBottom>
                 Top Companies by Contract Count
@@ -349,92 +401,68 @@ export default function Dashboard() {
                 Ranking of companies based on the total number of active contracts.
               </Typography>
             </Box>
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={barData}>
-                <XAxis dataKey="name" />
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                <XAxis 
+                  dataKey="name" 
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                  interval={0}
+                />
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="value" fill="#1976d2" />
               </BarChart>
             </ResponsiveContainer>
           </Card>
-        </Grid>
-
-        {/* Summary Cards */}
-        <Grid item xs={12} lg={4}>
-          <Grid container spacing={3} direction="column">
-            <Grid item>
-              <Card sx={{ p: 3, height: 190 }}>
-                <Typography variant="h6" gutterBottom>
-                  System Overview
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  Key metrics showing the current state of the contracting system.
-                </Typography>
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="body1" sx={{ mb: 1 }}>
-                    <strong>Total Contracts:</strong> {contracts.length}
-                  </Typography>
-                  <Typography variant="body1" sx={{ mb: 1 }}>
-                    <strong>Total Companies:</strong> {companies.length}
-                  </Typography>
-                  <Typography variant="body1" sx={{ mb: 1 }}>
-                    <strong>Total Locations:</strong> {locations.length}
-                  </Typography>
-                  <Typography variant="body1">
-                    <strong>Active Users:</strong> {users.length}
-                  </Typography>
-                </Box>
-              </Card>
-            </Grid>
-
-            <Grid item>
-              <Card sx={{ p: 3, height: 190 }}>
-                <Typography variant="h6" gutterBottom>
-                  Financial Summary
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  Contract value analysis and financial metrics.
-                </Typography>
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="body1" sx={{ mb: 1 }}>
-                    <strong>Total Value:</strong> ${contracts.reduce((sum, contract) => sum + Number(contract.total_value), 0).toLocaleString()}
-                  </Typography>
-                  <Typography variant="body1" sx={{ mb: 1 }}>
-                    <strong>Average Contract:</strong> ${contracts.length > 0 ? (contracts.reduce((sum, contract) => sum + Number(contract.total_value), 0) / contracts.length).toLocaleString() : '0'}
-                  </Typography>
-                  <Typography variant="body1">
-                    <strong>Largest Contract:</strong> ${contracts.length > 0 ? Math.max(...contracts.map(c => Number(c.total_value))).toLocaleString() : '0'}
-                  </Typography>
-                </Box>
-              </Card>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
 
       {/* Bottom Row: Companies Database (Full Width) */}
-      <Grid container spacing={3}>
-        {/* Companies Database */}
-        <Grid item xs={12}>
-          <Card sx={{ height: 500 }}>
-            <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
-              <Typography variant="h5" gutterBottom>
-                Companies Database
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Complete database of registered companies with detailed information.
-              </Typography>
-              <Typography variant="subtitle2" sx={{ mt: 1 }}>
-                Total Companies: {companies.length}
-              </Typography>
-            </Box>
-            <Box sx={{ height: 400 }}>
-              <DataGrid 
-                rows={companies.map(company => ({
-                  ...company,
-                  id: company.company_id
-                }))} 
+      <Box sx={{ width: '100%' }}>
+        <Card sx={{ height: 500, width: '100%' }}>
+          <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
+            <Typography variant="h5" gutterBottom>
+              Companies Database
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Complete database of registered companies with detailed information.
+            </Typography>
+            <Typography variant="subtitle2" sx={{ mt: 1 }}>
+              Total Companies: {companies.length}
+            </Typography>
+          </Box>
+          <Box sx={{ height: 400 }}>
+            <DataGrid 
+              rows={companies.map(company => {
+                  // Calculate contract metrics for each company
+                  const companyContracts = contracts.filter(contract => contract.company_id === company.company_id);
+                  const contractCount = companyContracts.length;
+                  const totalValue = companyContracts.reduce((sum, contract) => sum + Number(contract.total_value || 0), 0);
+                  const avgValue = contractCount > 0 ? totalValue / contractCount : 0;
+                  
+                  // Find headquarters location
+                  const headquartersLocation = locations.find(loc => loc.location_id === company.primary_location_id);
+                  const headquarters = headquartersLocation ? `${headquartersLocation.city}, ${headquartersLocation.state_province}` : 'N/A';
+                  
+                  // Find first and last contract dates
+                  const contractDates = companyContracts.map(contract => new Date(contract.date_awarded)).sort((a, b) => a.getTime() - b.getTime());
+                  const firstContract = contractDates.length > 0 ? contractDates[0].toLocaleDateString() : 'N/A';
+                  const lastContract = contractDates.length > 0 ? contractDates[contractDates.length - 1].toLocaleDateString() : 'N/A';
+                  
+                  return {
+                    ...company,
+                    id: company.company_id,
+                    contract_count: contractCount,
+                    total_value: totalValue > 0 ? `$${totalValue.toLocaleString()}` : '$0',
+                    avg_value: avgValue > 0 ? `$${Math.round(avgValue).toLocaleString()}` : '$0',
+                    headquarters: headquarters,
+                    first_contract: firstContract,
+                    last_contract: lastContract,
+                    founded_date: company.founded_date ? new Date(company.founded_date).toLocaleDateString() : 'N/A'
+                  };
+                })} 
                 columns={columns}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
@@ -445,8 +473,7 @@ export default function Dashboard() {
               />
             </Box>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
     </>
   );
 
@@ -738,8 +765,10 @@ export default function Dashboard() {
       {/* Main Content */}
       <Box sx={{
         flexGrow: 1,
-        p: 3,
+        p: 2,
         ml: { sm: `${drawerWidth}px` },
+        width: `calc(100vw - ${drawerWidth}px)`,
+        maxWidth: '100%',
       }}>
         {/* Top AppBar */}
         <AppBar position="static" sx={{ backgroundColor: "#2196f3" }}>
@@ -761,7 +790,7 @@ export default function Dashboard() {
         {/* Dashboard Content */}
         <Box sx={{
           flexGrow: 1,
-          p: 3,
+          width: '100%',
         }}>
           {/* Loading State */}
           {loading && (
