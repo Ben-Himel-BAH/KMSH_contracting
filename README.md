@@ -13,6 +13,26 @@ The Contracting Visualization Software is an AI-powered, RESTful service applica
 * Ensure data is accurate, up-to-date, and easily exportable.
 * Maintain high system availability, security, and compliance.
 
+## Rationale for Choosing Contracting Visualization Software
+
+The rationale for choosing the Contracting Visualization Software is to provide contracting companies and stakeholders with a secure, AI-powered platform for analyzing historical US government contract data. Key reasons include:
+
+- **Strategic Decision Support**  
+  Enables users to explore, visualize, and report on contract trends, helping inform business development and compliance strategies.
+
+- **Security and Compliance**  
+  Designed to meet federal requirements (FISMA, data protection), with robust authentication, authorization, and audit logging.
+
+- **Data Integrity and Transparency**  
+  Uses explainable AI and strong input validation to ensure trustworthy insights and reduce risks from data manipulation or errors.
+
+- **Operational Efficiency**  
+  Automates data analysis and reporting, reducing manual effort and improving accuracy.
+
+- **Scalability and Extensibility**  
+  Built with modern frameworks (FastAPI, React, PostgreSQL) and supports future enhancements (e.g., SAML, advanced analytics).
+  
+
 ## 🎯 Project Goal
 
 The primary goal of this capstone is to **build and present a working prototype of a software application, demonstrating the integration of Generative AI at every phase of the SDLC**. You will act as a full-stack developer, using AI as your co-pilot for planning, architecture, coding, testing, and documentation.
