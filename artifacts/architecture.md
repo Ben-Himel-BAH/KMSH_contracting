@@ -1,5 +1,22 @@
 # Contracting Visualization Software - Design and Architecture Overview
 
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [System Overview and Description](#system-overview-and-description)
+3. [Key Components and Their Roles](#key-components-and-their-roles)
+4. [Architecture Diagrams](#architecture-diagrams)
+	- [ERD Diagram](#erd-diagram)
+	- [Context Diagram](#context-diagram)
+	- [Sequence Diagram](#sequence-diagram)
+5. [Database Schema](#database-schema)
+6. [Supporting Documentation](#supporting-documentation)
+	- [Product Requirements Document (PRD)](./convisoft_prd.md)
+	- [Architecture Decision Records (ADR)](./convisoft_adr.md)
+7. [Notes](#notes)
+8. [Summary](#summary)
+
+
 ## Introduction
 
 This document provides a comprehensive overview of the design and architecture for the Contracting Visualization Software project. It details the system's components, their interactions, and the supporting diagrams that illustrate the underlying structure and workflows. This guide serves as a reference for developers, stakeholders, and architects to understand the system's layout, responsibilities, and integration points.
