@@ -45,7 +45,7 @@ The primary goal of this capstone is to **build and present a working prototype 
 Your final submission must include the following components. You will use AI assistance to generate and refine each of these artifacts.
 
 * **Documentation:**
-   Created convisoft.ipynb to produce all the artifacts below.
+  Created convisoft_doc_gen.ipynb notebook to produce all the artifacts below.
    - [x] `Product Requirements Document (PRD)` generated from a high-level idea.
       - [x] Artifact Produced: convisoft_prd.md
    - [x] `Architecture Document` including auto-generated UML diagrams (e.g., Component or Sequence diagrams).
