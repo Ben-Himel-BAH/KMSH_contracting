@@ -28,5 +28,105 @@
     "LengthOfContract": "N/A",
     "NAICS": "332994",
     "PSC": "NA"
-  }
+  },
+  {
+    "ContractName": "Joint Enterprise Defense Infrastructure (JEDI) Cloud",
+    "CompanyName": "Microsoft Corporation",
+    "TotalContractValue": "$10,000,000,000",
+    "DateAwarded": "2019-10-25",
+    "Location": "Arlington, VA",
+    "LengthOfContract": "10 years",
+    "NAICS": "518210",
+    "PSC": "D307"
+  },
+{
+        "ContractName": "Enterprise Infrastructure Solutions (EIS)",
+        "CompanyName": "General Services Administration",
+        "TotalContractValue": "$50,000,000,000",
+        "DateAwarded": "2017-09-29",
+        "Location": "Washington, DC", 
+        "LengthOfContract": "15 years",
+        "NAICS": "517311",
+        "PSC": "D316"
+    },
+    {
+        "ContractName": "Alliant 2 Government-wide Acquisition Contract",
+        "CompanyName": "Multiple Vendors",
+        "TotalContractValue": "$65,000,000,000",
+        "DateAwarded": "2017-12-15",
+        "Location": "Washington, DC",
+        "LengthOfContract": "10 years",
+        "NAICS": "541511",
+        "PSC": "R425"
+    },
+    {
+        "ContractName": "NASA SEWP V (Solutions for Enterprise-Wide Procurement)",
+        "CompanyName": "Multiple Vendors",
+        "TotalContractValue": "$20,000,000,000",
+        "DateAwarded": "2015-04-01",
+        "Location": "Greenbelt, MD",
+        "LengthOfContract": "10 years",
+        "NAICS": "423430",
+        "PSC": "7030"
+    },
+    {
+        "ContractName": "Department of Veterans Affairs Electronic Health Record",
+        "CompanyName": "Cerner Corporation",
+        "TotalContractValue": "$16,100,000,000",
+        "DateAwarded": "2018-05-17",
+        "Location": "Kansas City, MO",
+        "LengthOfContract": "10 years",
+        "NAICS": "541511",
+        "PSC": "D302"
+    },
+    {
+        "ContractName": "Air Force Enterprise IT-as-a-Service (EITaaS)",
+        "CompanyName": "General Dynamics Information Technology",
+        "TotalContractValue": "$7,200,000,000",
+        "DateAwarded": "2020-03-26",
+        "Location": "San Antonio, TX",
+        "LengthOfContract": "8 years",
+        "NAICS": "541511",
+        "PSC": "D316"
+    },
+    {
+        "ContractName": "GSA Multiple Award Schedule (MAS)",
+        "CompanyName": "IBM Corporation",
+        "TotalContractValue": "$12,000,000,000",
+        "DateAwarded": "2019-07-15",
+        "Location": "Armonk, NY",
+        "LengthOfContract": "20 years",
+        "NAICS": "541511",
+        "PSC": "D307"
+    },
+    {
+        "ContractName": "Defense Enterprise Office Solution (DEOS)",
+        "CompanyName": "Dell Technologies",
+        "TotalContractValue": "$7,600,000,000",
+        "DateAwarded": "2020-02-07",
+        "Location": "Round Rock, TX",
+        "LengthOfContract": "7 years",
+        "NAICS": "334111",
+        "PSC": "7025"
+    },
+    {
+        "ContractName": "Homeland Security Enterprise Network (HSEN)",
+        "CompanyName": "Verizon Communications",
+        "TotalContractValue": "$3,100,000,000",
+        "DateAwarded": "2021-09-30",
+        "Location": "New York, NY",
+        "LengthOfContract": "5 years",
+        "NAICS": "517311",
+        "PSC": "D316"
+    },
+    {
+        "ContractName": "Navy SeaPort Next Generation (SeaPort NxG)",
+        "CompanyName": "Multiple Vendors",
+        "TotalContractValue": "$5,300,000,000",
+        "DateAwarded": "2018-06-12",
+        "Location": "Washington, DC",
+        "LengthOfContract": "10 years",
+        "NAICS": "541330",
+        "PSC": "R425"
+    }
 ]
