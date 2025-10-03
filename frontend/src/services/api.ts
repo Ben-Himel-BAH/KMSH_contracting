@@ -28,9 +28,7 @@ class ApiService {
 
   // Company endpoints
   async getCompanies(): Promise<Company[]> {
-    const result = await this.fetchWithErrorHandling<Company[]>('/companies/');
-    console.log('API Response - Companies:', result);
-    return result;
+    return this.fetchWithErrorHandling<Company[]>('/companies/');
   }
 
   async createCompany(legalName: string): Promise<Company> {
@@ -42,9 +40,7 @@ class ApiService {
 
   // Contract endpoints
   async getContracts(): Promise<Contract[]> {
-    const result = await this.fetchWithErrorHandling<Contract[]>('/contracts/');
-    console.log('API Response - Contracts:', result);
-    return result;
+    return this.fetchWithErrorHandling<Contract[]>('/contracts/');
   }
 
   async createContract(contractData: {
