@@ -1,221 +1,308 @@
-import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+// Dashboard.tsx
+import React, { useState } from "react";
+import Grid from "@mui/material/Grid";
 import {
-  BarChart,
-  PieChart,
-  LineChart,
-  ScatterChart,
-  Gauge,
-} from "@mui/x-charts";
-import {
+  Box,
   AppBar,
   Toolbar,
-  IconButton,
   Typography,
+  Drawer,
+  IconButton,
   Avatar,
-  Box,
-  TextField,
-  CircularProgress,
+  Card,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  useTheme,
 } from "@mui/material";
-import { debounce } from "lodash";
-import "tailwindcss/tailwind.css";
-import { myCompaniesData } from "./data/myCompaiesData";
+import { DataGrid } from "@mui/x-data-grid";
+import type { GridColDef } from "@mui/x-data-grid";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
+import { Gauge } from "@mui/x-charts/Gauge";
+import { RadarChart } from "@mui/x-charts/RadarChart";
+import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import AnalyticsIcon from "@mui/icons-material/Analytics";
+import PeopleIcon from "@mui/icons-material/People";
+import SettingsIcon from "@mui/icons-material/Settings";
 
-const Dashboard: React.FC = () => {
-  const [biggestCompanies, setBiggestCompanies] = useState(() => myCompaniesData);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+// Dummy Data
+const barData = [
+  { name: "Company A", value: 400 },
+  { name: "Company B", value: 300 },
+  { name: "Company C", value: 200 },
+];
 
-  const fetchBiggestCompanies = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get("/biggest-companies");
-      const data = response.data;
-      setBiggestCompanies(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error(error);
-      setBiggestCompanies([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+const pieData = [
+  { name: "Group A", value: 400 },
+  { name: "Group B", value: 300 },
+  { name: "Group C", value: 300 },
+];
 
-  useEffect(() => {
-    fetchBiggestCompanies();
-  }, [fetchBiggestCompanies]);
+const lineData = [
+  { year: 2020, value: 100 },
+  { year: 2021, value: 300 },
+  { year: 2022, value: 500 },
+  { year: 2023, value: 200 },
+];
 
-  const handleSearch = useCallback(
-    debounce((event) => {
-      setSearch(event.target.value);
-    }, 300),
-    []
-  );
+const radarData = [
+  { subject: "R&D", A: 120, B: 110 },
+  { subject: "Sales", A: 98, B: 130 },
+  { subject: "Marketing", A: 86, B: 130 },
+  { subject: "HR", A: 99, B: 100 },
+  { subject: "Finance", A: 85, B: 90 },
+];
 
-  const filteredCompanies = biggestCompanies.filter((company) =>
-    company.company.legal_name.toLowerCase().includes(search.toLowerCase())
+const rows = [
+  { id: 1, name: "Company A", duns: "123456", cage: "ABC1" },
+  { id: 2, name: "Company B", duns: "654321", cage: "XYZ2" },
+  { id: 3, name: "Company C", duns: "112233", cage: "LMN3" },
+];
+
+const columns: GridColDef[] = [
+  { field: "id", headerName: "ID", width: 70 },
+  { field: "name", headerName: "Company Name", width: 200 },
+  { field: "duns", headerName: "DUNS Number", width: 150 },
+  { field: "cage", headerName: "CAGE Code", width: 150 },
+];
+
+const drawerWidth = 200;
+
+export default function Dashboard() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const theme = useTheme();
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const drawerContent = (
+    <Box sx={{ width: drawerWidth, bgcolor: "#3f51b5", color: "#fff", height: "100%" }}>
+      <Toolbar />
+      <Divider sx={{ bgcolor: "#fff" }} />
+      <List>
+        <ListItemButton>
+          <ListItemIcon sx={{ color: "#fff" }}>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="Home" />
+        </ListItemButton>
+
+        <ListItemButton>
+          <ListItemIcon sx={{ color: "#fff" }}>
+            <AssessmentIcon />
+          </ListItemIcon>
+          <ListItemText primary="Reports" />
+        </ListItemButton>
+
+        <ListItemButton>
+          <ListItemIcon sx={{ color: "#fff" }}>
+            <AnalyticsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Analytics" />
+        </ListItemButton>
+
+        <ListItemButton>
+          <ListItemIcon sx={{ color: "#fff" }}>
+            <PeopleIcon />
+          </ListItemIcon>
+          <ListItemText primary="Users" />
+        </ListItemButton>
+
+        <ListItemButton>
+          <ListItemIcon sx={{ color: "#fff" }}>
+            <SettingsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Settings" />
+        </ListItemButton>
+      </List>
+    </Box>
   );
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#0b1b3b] text-white flex flex-col">
-        <div className="p-4 text-xl font-bold border-b border-gray-700">
-          Dashboard
-        </div>
-        <nav className="flex-1 p-4 space-y-3">
-          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">
-            Home
-          </div>
-          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">
-            Reports
-          </div>
-          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">
-            Analytics
-          </div>
-          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">
-            Users
-          </div>
-          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">
-            Settings
-          </div>
-        </nav>
-      </aside>
+    <Box sx={{ display: "flex", minHeight: "100vh", width: "100vw" }}>
+      {/* Sidebar Drawer */}
+      <Box component="nav">
+        {/* Mobile Drawer */}
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth, bgcolor: "#3f51b5", color: "#fff" },
+          }}
+        >
+          {drawerContent}
+        </Drawer>
 
-      {/* Main content */}
-      <main className="flex-1 flex flex-col overflow-y-auto">
-        {/* Top Navbar */}
-        <AppBar position="static" className="bg-[#0b1b3b] shadow-none">
-          <Toolbar className="flex justify-between">
-            <Typography variant="h6" className="font-bold">
-              Product Overview
-            </Typography>
-            <div className="flex items-center space-x-4">
-              <TextField
-                id="search"
-                label="Search Companies"
-                variant="outlined"
-                size="small"
-                onChange={handleSearch}
-                className="bg-white rounded"
-              />
-              <IconButton color="inherit">
-                <Avatar alt="User" src="" />
-              </IconButton>
-            </div>
+        {/* Desktop Drawer */}
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth, bgcolor: "#3f51b5", color: "#fff" },
+          }}
+          open
+        >
+          {drawerContent}
+        </Drawer>
+      </Box>
+
+      {/* Main Content */}
+      <Box sx={{
+        flexGrow: 1,
+        p: 3,
+        ml: { sm: `${drawerWidth}px` },
+      }}>
+        {/* Top AppBar */}
+        <AppBar position="static" sx={{ backgroundColor: "#2196f3" }}>
+          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              onClick={handleDrawerToggle}
+              sx={{ display: { sm: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6">Convisoft Dashboard</Typography>
+            <Avatar sx={{ bgcolor: "white", color: "black" }}>P</Avatar>
           </Toolbar>
         </AppBar>
 
-        {/* Dashboard Cards */}
-        {loading ? (
-          <Box className="flex justify-center items-center h-64">
-            <CircularProgress />
-          </Box>
-        ) : (
-          <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Card 1 - Bar Chart */}
-            <Box className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-bold mb-2">Bar Graph</h2>
-              <BarChart
-                xAxis={[
-                  {
-                    data: filteredCompanies.map((c) => c.company.legal_name),
-                    scaleType: "band",
-                  },
-                ]}
-                series={[
-                  {
-                    data: filteredCompanies.map((c) =>
-                      parseFloat(c.total_contract_value)
-                    ),
-                  },
-                ]}
-                height={300}
-              />
-            </Box>
+        {/* Dashboard Content */}
+        <Box sx={{
+          flexGrow: 1,
+          p: 3,
+          // add left margin equal to drawer width on sm+ screens
+        }}>
+          {/* Top Row: Bar + Radar Charts */}
+          <Grid container spacing={2} mb={2}>
+            {/* Bar Graph - 2/3 width */}
+            <Grid item xs={8}>
+              <Card sx={{ p: 2 }}>
+                <Typography variant="h6">Top Companies</Typography>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={barData}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#1976d2" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+            </Grid>
 
-            {/* Card 2 - Pie Chart */}
-            <Box className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-bold mb-2">Pie Chart</h2>
-              <PieChart
-                series={[
-                  {
-                    data: filteredCompanies.map((c, i) => ({
-                      id: i,
-                      value: parseFloat(c.total_contract_value),
-                      label: c.company.legal_name,
-                    })),
-                  },
-                ]}
-                height={300}
-              />
-            </Box>
+            {/* Radar Charts - 1/3 width, split equally */}
+            <Grid item xs={4}>
+              <Grid container spacing={2} direction="column">
+                <Grid item>
+                  <Card sx={{ p: 2 }}>
+                    <RadarChart
+                      width={200}
+                      height={200}
+                      series={[
+                        { label: "Series A", data: radarData.map((d) => d.A), color: "blue" },
+                      ]}
+                      radar={{ metrics: radarData.map((d) => d.subject) }}
+                    />
+                  </Card>
+                </Grid>
+                <Grid item>
+                  <Card sx={{ p: 2 }}>
+                    <RadarChart
+                      width={200}
+                      height={200}
+                      series={[
+                        { label: "Series B", data: radarData.map((d) => d.B), color: "green" },
+                      ]}
+                      radar={{ metrics: radarData.map((d) => d.subject) }}
+                    />
+                  </Card>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
 
-            {/* Card 3 - Line Chart */}
-            <Box className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-bold mb-2">Line Chart</h2>
-              <LineChart
-                xAxis={[
-                  {
-                    data: filteredCompanies.map((c) => c.company.legal_name),
-                    scaleType: "band",
-                  },
-                ]}
-                series={[
-                  {
-                    data: filteredCompanies.map((c) =>
-                      parseFloat(c.total_contract_value)
-                    ),
-                  },
-                ]}
-                height={300}
-              />
-            </Box>
 
-            {/* Card 4 - Scatter Chart */}
-            <Box className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-bold mb-2">Scatter Plot</h2>
-              <ScatterChart
-                xAxis={[
-                  {
-                    label: "Total Contract Value",
-                  },
-                ]}
-                yAxis={[
-                  {
-                    label: "Contract Count",
-                  },
-                ]}
-                series={[
-                  {
-                    label: "Companies",
-                    data: filteredCompanies.map((c) => ({
-                      x: parseFloat(c.total_contract_value),
-                      y: c.contract_count,
-                      id: c.company.legal_name,
-                    })),
-                  },
-                ]}
-                height={300}
-              />
-            </Box>
+          {/* Second Row: Left + Right */}
+          <Grid container spacing={2}>
+            {/* Left Section */}
+            <Grid item xs={8}>
+              <Grid container spacing={2} direction="column">
+                {/* Top Section: Pie Charts + Gauge */}
+                <Grid item>
+                  <Grid container spacing={2} justifyContent="center">
+                    <Grid item xs={6} sm={4}>
+                      <Card sx={{ p: 2 }}>
+                        <PieChart width={150} height={150}>
+                          <Pie data={pieData} dataKey="value" outerRadius={60} fill="#8884d8" label>
+                            {pieData.map((entry, index) => (
+                              <Cell
+                                key={`cell1-${index}`}
+                                fill={["#8884d8", "#82ca9d", "#ffc658"][index % 3]}
+                              />
+                            ))}
+                          </Pie>
+                        </PieChart>
+                      </Card>
+                    </Grid>
 
-            {/* Card 5 - Gauge */}
-            <Box className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-bold mb-2">Gauge Chart</h2>
-              <Gauge
-                value={filteredCompanies.reduce(
-                  (acc, c) => acc + parseFloat(c.total_contract_value),
-                  0
-                )}
-                valueMax={10000000}
-                height={300}
-              />
-            </Box>
-          </div>
-        )}
-      </main>
-    </div>
+                    <Grid item xs={6} sm={4}>
+                      <Card sx={{ p: 2 }}>
+                        <PieChart width={150} height={150}>
+                          <Pie data={pieData} dataKey="value" outerRadius={60} fill="#82ca9d" label>
+                            {pieData.map((entry, index) => (
+                              <Cell
+                                key={`cell2-${index}`}
+                                fill={["#ffc658", "#8884d8", "#82ca9d"][index % 3]}
+                              />
+                            ))}
+                          </Pie>
+                        </PieChart>
+                      </Card>
+                    </Grid>
+
+                    <Grid item xs={6} sm={4}>
+                      <Card sx={{ p: 2, display: "flex", justifyContent: "center" }}>
+                        <Gauge value={60} valueMin={0} valueMax={100} />
+                      </Card>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                {/* Bottom Section: Sparkline */}
+                <Grid item>
+                  <Card sx={{ p: 2 }}>
+                    <Typography variant="h6">Sparkline</Typography>
+                    <ResponsiveContainer width="100%" height={80}>
+                      <LineChart data={lineData}>
+                        <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} dot={false} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </Grid>
+
+                {/* Data Grid */}
+                <Grid item>
+                  <Card sx={{ height: 300 }}>
+                    <DataGrid rows={rows} columns={columns} />
+                  </Card>
+                </Grid>
+              </Grid>
+            </Grid>
+
+
+          </Grid>
+        </Box>
+      </Box>
+    </Box>
   );
-};
-
-export default Dashboard;
+}

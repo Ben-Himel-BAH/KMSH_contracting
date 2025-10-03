@@ -19,30 +19,75 @@ import {
 } from "@mui/material";
 import { debounce } from "lodash";
 import "tailwindcss/tailwind.css";
-import { myCompaniesData } from "./data/myCompaiesData";
 
 const Dashboard: React.FC = () => {
-  const [biggestCompanies, setBiggestCompanies] = useState(() => myCompaniesData);
+  const [topCompanies, setTopCompanies] = useState<any[]>([]);
+  const [valueByYear, setValueByYear] = useState<any[]>([]);
+  const [contracts, setContracts] = useState<any[]>([]);
+  const [totalValue, setTotalValue] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  const fetchBiggestCompanies = useCallback(async () => {
+  // Axios instance pointing to localhost:3000
+  const api = axios.create({
+    baseURL: "http://localhost:3000",
+  });
+
+  const fetchDashboardData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/biggest-companies");
-      const data = response.data;
-      setBiggestCompanies(Array.isArray(data) ? data : []);
+      const [companiesRes, yearsRes, contractsRes] = await Promise.all([
+        api.get("/api/stats/top-companies"),
+        api.get("/api/stats/value-by-year"),
+        api.get("/api/contracts"),
+      ]);
+
+      const companies = companiesRes.data || [];
+      const years = yearsRes.data || [];
+      const contracts = contractsRes.data || [];
+
+      setTopCompanies(companies);
+      setValueByYear(years);
+      setContracts(contracts);
+
+      // Calculate total contract value for gauge
+      const total = contracts.reduce(
+        (acc: number, c: any) => acc + parseFloat(c.total_value || "0"),
+        0
+      );
+      setTotalValue(total);
     } catch (error) {
-      console.error(error);
-      setBiggestCompanies([]);
+      console.error("API error, using dummy data:", error);
+
+      // ✅ Dummy data fallback
+      const dummyCompanies = [
+        { company: { legal_name: "Alpha Inc" }, total_contract_value: "500000", contract_count: 10 },
+        { company: { legal_name: "Beta LLC" }, total_contract_value: "300000", contract_count: 6 },
+        { company: { legal_name: "Gamma Corp" }, total_contract_value: "200000", contract_count: 4 },
+      ];
+      const dummyYears = [
+        { year: 2021, total_value: "200000", contract_count: 5 },
+        { year: 2022, total_value: "400000", contract_count: 7 },
+        { year: 2023, total_value: "600000", contract_count: 9 },
+      ];
+      const dummyContracts = [
+        { contract_id: 1, total_value: "150000", company: { legal_name: "Alpha Inc" } },
+        { contract_id: 2, total_value: "200000", company: { legal_name: "Beta LLC" } },
+        { contract_id: 3, total_value: "100000", company: { legal_name: "Gamma Corp" } },
+      ];
+
+      setTopCompanies(dummyCompanies);
+      setValueByYear(dummyYears);
+      setContracts(dummyContracts);
+      setTotalValue(450000);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchBiggestCompanies();
-  }, [fetchBiggestCompanies]);
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const handleSearch = useCallback(
     debounce((event) => {
@@ -51,8 +96,8 @@ const Dashboard: React.FC = () => {
     []
   );
 
-  const filteredCompanies = biggestCompanies.filter((company) =>
-    company.company.legal_name.toLowerCase().includes(search.toLowerCase())
+  const filteredCompanies = topCompanies.filter((c) =>
+    c.company.legal_name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -63,27 +108,16 @@ const Dashboard: React.FC = () => {
           Dashboard
         </div>
         <nav className="flex-1 p-4 space-y-3">
-          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">
-            Home
-          </div>
-          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">
-            Reports
-          </div>
-          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">
-            Analytics
-          </div>
-          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">
-            Users
-          </div>
-          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">
-            Settings
-          </div>
+          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">Home</div>
+          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">Reports</div>
+          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">Analytics</div>
+          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">Users</div>
+          <div className="hover:bg-[#112255] p-2 rounded cursor-pointer">Settings</div>
         </nav>
       </aside>
 
       {/* Main content */}
       <main className="flex-1 flex flex-col overflow-y-auto">
-        {/* Top Navbar */}
         <AppBar position="static" className="bg-[#0b1b3b] shadow-none">
           <Toolbar className="flex justify-between">
             <Typography variant="h6" className="font-bold">
@@ -105,37 +139,25 @@ const Dashboard: React.FC = () => {
           </Toolbar>
         </AppBar>
 
-        {/* Dashboard Cards */}
         {loading ? (
           <Box className="flex justify-center items-center h-64">
             <CircularProgress />
           </Box>
         ) : (
           <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Card 1 - Bar Chart */}
+            {/* Bar Chart */}
             <Box className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-bold mb-2">Bar Graph</h2>
+              <h2 className="text-lg font-bold mb-2">Top Companies (Bar)</h2>
               <BarChart
-                xAxis={[
-                  {
-                    data: filteredCompanies.map((c) => c.company.legal_name),
-                    scaleType: "band",
-                  },
-                ]}
-                series={[
-                  {
-                    data: filteredCompanies.map((c) =>
-                      parseFloat(c.total_contract_value)
-                    ),
-                  },
-                ]}
+                xAxis={[{ data: filteredCompanies.map((c) => c.company.legal_name), scaleType: "band" }]}
+                series={[{ data: filteredCompanies.map((c) => parseFloat(c.total_contract_value)) }]}
                 height={300}
               />
             </Box>
 
-            {/* Card 2 - Pie Chart */}
+            {/* Pie Chart */}
             <Box className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-bold mb-2">Pie Chart</h2>
+              <h2 className="text-lg font-bold mb-2">Contract Share (Pie)</h2>
               <PieChart
                 series={[
                   {
@@ -150,47 +172,28 @@ const Dashboard: React.FC = () => {
               />
             </Box>
 
-            {/* Card 3 - Line Chart */}
+            {/* Line Chart */}
             <Box className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-bold mb-2">Line Chart</h2>
+              <h2 className="text-lg font-bold mb-2">Value by Year</h2>
               <LineChart
-                xAxis={[
-                  {
-                    data: filteredCompanies.map((c) => c.company.legal_name),
-                    scaleType: "band",
-                  },
-                ]}
-                series={[
-                  {
-                    data: filteredCompanies.map((c) =>
-                      parseFloat(c.total_contract_value)
-                    ),
-                  },
-                ]}
+                xAxis={[{ data: valueByYear.map((d) => d.year), scaleType: "band" }]}
+                series={[{ data: valueByYear.map((d) => parseFloat(d.total_value)) }]}
                 height={300}
               />
             </Box>
 
-            {/* Card 4 - Scatter Chart */}
+            {/* Scatter Chart */}
             <Box className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-bold mb-2">Scatter Plot</h2>
+              <h2 className="text-lg font-bold mb-2">Contracts (Scatter)</h2>
               <ScatterChart
-                xAxis={[
-                  {
-                    label: "Total Contract Value",
-                  },
-                ]}
-                yAxis={[
-                  {
-                    label: "Contract Count",
-                  },
-                ]}
+                xAxis={[{ label: "Contract ID" }]}
+                yAxis={[{ label: "Value" }]}
                 series={[
                   {
-                    label: "Companies",
-                    data: filteredCompanies.map((c) => ({
-                      x: parseFloat(c.total_contract_value),
-                      y: c.contract_count,
+                    label: "Contracts",
+                    data: contracts.map((c: any) => ({
+                      x: c.contract_id,
+                      y: parseFloat(c.total_value || "0"),
                       id: c.company.legal_name,
                     })),
                   },
@@ -199,17 +202,10 @@ const Dashboard: React.FC = () => {
               />
             </Box>
 
-            {/* Card 5 - Gauge */}
+            {/* Gauge */}
             <Box className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-bold mb-2">Gauge Chart</h2>
-              <Gauge
-                value={filteredCompanies.reduce(
-                  (acc, c) => acc + parseFloat(c.total_contract_value),
-                  0
-                )}
-                valueMax={10000000}
-                height={300}
-              />
+              <h2 className="text-lg font-bold mb-2">Total Contract Value</h2>
+              <Gauge value={totalValue} valueMax={1000000} height={300} />
             </Box>
           </div>
         )}
