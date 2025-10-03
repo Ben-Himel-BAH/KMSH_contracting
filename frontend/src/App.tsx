@@ -53,6 +53,7 @@ export default function Dashboard() {
   const [pieValueData, setPieValueData] = useState<ChartData[]>([]);
   const [lineData, setLineData] = useState<LineChartData[]>([]);
   const [radarData, setRadarData] = useState<RadarData[]>([]);
+  const [riskData, setRiskData] = useState<RadarData[]>([]);
 
   // Load data from API
   useEffect(() => {
@@ -172,14 +173,113 @@ export default function Dashboard() {
 
     setLineData(lineChartData);
 
-    // Radar chart: Default metrics based on actual data
-    setRadarData([
-      { subject: "Active Contracts", A: Math.min(contractsData.length, 120), B: 100 },
-      { subject: "Companies", A: Math.min(companiesData.length * 10, 120), B: 80 },
-      { subject: "Locations", A: Math.min(locationsData.length * 5, 120), B: 90 },
-      { subject: "Users", A: Math.min(usersData.length * 20, 120), B: 70 },
-      { subject: "Performance", A: 85, B: 90 },
-    ]);
+    // Radar chart: Contract Performance Metrics
+    const currentDate = new Date();
+    const lastYearDate = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate());
+    const last6MonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 6, currentDate.getDate());
+    
+    // Calculate meaningful contract metrics
+    const activeContracts = contractsData.filter(contract => {
+      const endDate = contract.end_date ? new Date(contract.end_date) : new Date();
+      const startDate = new Date(contract.start_date || contract.date_awarded);
+      return startDate <= currentDate && endDate >= currentDate;
+    }).length;
+
+    const recentContracts = contractsData.filter(contract => {
+      const awardedDate = new Date(contract.date_awarded);
+      return awardedDate >= last6MonthsDate;
+    }).length;
+
+    const totalValue = contractsData.reduce((sum, contract) => sum + Number(contract.total_value || 0), 0);
+    const avgContractValue = contractsData.length > 0 ? totalValue / contractsData.length : 0;
+
+    const largeContracts = contractsData.filter(contract => Number(contract.total_value || 0) > avgContractValue).length;
+    const contractsWithEndDates = contractsData.filter(contract => contract.end_date).length;
+    const completionRate = contractsData.length > 0 ? (contractsWithEndDates / contractsData.length) * 100 : 0;
+
+    // Geographic diversity (unique states)
+    const uniqueStates = new Set(
+      contractsData
+        .map(contract => {
+          const location = locationsData.find(loc => loc.location_id === contract.place_of_performance_location_id);
+          return location?.state_province;
+        })
+        .filter(Boolean)
+    ).size;
+
+    // Vendor diversity (active companies with contracts)
+    const activeVendors = new Set(contractsData.map(contract => contract.company_id)).size;
+
+    // Current performance metrics (scaled 0-100)
+    const currentMetrics = [
+      { 
+        subject: "Contract Volume", 
+        A: Math.min((activeContracts / Math.max(contractsData.length, 1)) * 100, 100),
+        B: 85 // Target: 85% of contracts should be active
+      },
+      { 
+        subject: "Recent Activity", 
+        A: Math.min((recentContracts / Math.max(contractsData.length, 1)) * 100, 100),
+        B: 30 // Target: 30% new contracts in last 6 months
+      },
+      { 
+        subject: "Value Distribution", 
+        A: Math.min((largeContracts / Math.max(contractsData.length, 1)) * 100, 100),
+        B: 40 // Target: 40% high-value contracts
+      },
+      { 
+        subject: "Geographic Reach", 
+        A: Math.min(uniqueStates * 2, 100), // Scale states (max ~50 states)
+        B: 60 // Target: presence in 30+ states
+      },
+      { 
+        subject: "Vendor Diversity", 
+        A: Math.min((activeVendors / Math.max(companiesData.length, 1)) * 100, 100),
+        B: 70 // Target: 70% of registered vendors have active contracts
+      },
+      { 
+        subject: "Data Completeness", 
+        A: completionRate,
+        B: 95 // Target: 95% contracts have complete data
+      }
+    ];
+
+    // Risk assessment metrics for second radar
+    const overdueTasks = contractsData.filter(contract => {
+      const endDate = contract.end_date ? new Date(contract.end_date) : null;
+      return endDate && endDate < currentDate;
+    }).length;
+
+    const riskMetrics = [
+      { 
+        subject: "Contract Health", 
+        A: Math.max(100 - (overdueTasks / Math.max(contractsData.length, 1)) * 100, 0),
+        B: 90 // Target: 90% healthy contracts
+      },
+      { 
+        subject: "Financial Health", 
+        A: avgContractValue > 100000 ? 85 : 60, // Higher score for valuable contracts
+        B: 80 // Target financial health score
+      },
+      { 
+        subject: "Compliance Rate", 
+        A: Math.min((contractsWithEndDates / Math.max(contractsData.length, 1)) * 100, 100),
+        B: 95 // Target: 95% compliance
+      },
+      { 
+        subject: "Performance Trend", 
+        A: recentContracts > activeContracts * 0.1 ? 80 : 50, // Good if recent activity
+        B: 75 // Target performance trend
+      },
+      { 
+        subject: "Risk Mitigation", 
+        A: uniqueStates > 5 ? 85 : 60, // Geographic diversity reduces risk
+        B: 80 // Target risk mitigation score
+      }
+    ];
+
+    setRadarData(currentMetrics);
+    setRiskData(riskMetrics);
   };
 
   // DataGrid columns for companies
@@ -365,10 +465,10 @@ export default function Dashboard() {
                   <Card sx={{ p: 3 }}>
                     <Box sx={{ mb: 2 }}>
                       <Typography variant="h6" gutterBottom>
-                        Current System Metrics
+                        Contract Performance Metrics
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Real-time performance indicators showing active contracts, registered companies, tracked locations, and system users.
+                        Current performance across key contracting dimensions including volume, activity, value distribution, and geographic reach.
                       </Typography>
                     </Box>
                     <Box display="flex" justifyContent="center">
@@ -376,7 +476,8 @@ export default function Dashboard() {
                         width={300}
                         height={250}
                         series={[
-                          { label: "Current", data: radarData.map((d) => d.A), color: "blue" },
+                          { label: "Current", data: radarData.map((d) => d.A), color: "#1976d2" },
+                          { label: "Target", data: radarData.map((d) => d.B), color: "#ff9800" },
                         ]}
                         radar={{ metrics: radarData.map((d) => d.subject) }}
                       />
@@ -388,10 +489,10 @@ export default function Dashboard() {
                   <Card sx={{ p: 3 }}>
                     <Box sx={{ mb: 2 }}>
                       <Typography variant="h6" gutterBottom>
-                        Target Benchmarks
+                        Risk Assessment Dashboard
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Performance targets and benchmarks for system metrics. Compare current performance against established goals.
+                        Risk analysis across contract health, financial stability, compliance rates, and performance trends.
                       </Typography>
                     </Box>
                     <Box display="flex" justifyContent="center">
@@ -399,20 +500,21 @@ export default function Dashboard() {
                         width={300}
                         height={250}
                         series={[
-                          { label: "Target", data: radarData.map((d) => d.B), color: "green" },
+                          { label: "Current", data: riskData.map((d) => d.A), color: "#4caf50" },
+                          { label: "Target", data: riskData.map((d) => d.B), color: "#e91e63" },
                         ]}
-                        radar={{ metrics: radarData.map((d) => d.subject) }}
+                        radar={{ metrics: riskData.map((d) => d.subject) }}
                       />
                     </Box>
                   </Card>
                 </Grid>
               </Grid>
 
-              {/* Third Row: Distribution Charts and System Health */}
+              {/* Third Row: Distribution Charts (50% width each) */}
               <Grid container spacing={3} mb={4}>
-                <Grid item xs={12} md={4}>
-                  <Card sx={{ p: 3, height: 500 }}>
-                    <Box sx={{ mb: 2 }}>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 4, height: 550 }}>
+                    <Box sx={{ mb: 3 }}>
                       <Typography variant="h6" gutterBottom>
                         Contract Awards by State
                       </Typography>
@@ -425,10 +527,10 @@ export default function Dashboard() {
                       flexDirection="column" 
                       alignItems="center" 
                       sx={{ 
-                        height: 380,
+                        height: 430,
                         overflow: 'visible',
-                        padding: '20px',
-                        margin: '-10px'
+                        padding: '30px',
+                        margin: '-15px'
                       }}
                     >
                       <Box sx={{ 
@@ -438,14 +540,14 @@ export default function Dashboard() {
                         justifyContent: 'center',
                         overflow: 'visible'
                       }}>
-                        <PieChart width={400} height={350} margin={{ top: 20, right: 50, bottom: 60, left: 50 }}>
+                        <PieChart width={500} height={400} margin={{ top: 30, right: 80, bottom: 80, left: 80 }}>
                           <Pie 
                             data={pieData} 
                             dataKey="value" 
                             nameKey="name"
                             cx="50%" 
-                            cy="40%" 
-                            outerRadius={80} 
+                            cy="45%" 
+                            outerRadius={90} 
                             fill="#8884d8" 
                             label={({ name, value, percent }) => 
                               `${name}: ${value} (${(percent * 100).toFixed(1)}%)`
@@ -467,14 +569,14 @@ export default function Dashboard() {
                           />
                           <Legend 
                             verticalAlign="bottom" 
-                            height={50}
+                            height={60}
                             formatter={(value) => `${value}`}
-                            wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
+                            wrapperStyle={{ fontSize: '12px', paddingTop: '15px' }}
                           />
                         </PieChart>
                       </Box>
                       {pieData.length > 0 && (
-                        <Box sx={{ mt: 1, textAlign: 'center' }}>
+                        <Box sx={{ mt: 2, textAlign: 'center' }}>
                           <Typography variant="caption" color="text.secondary">
                             Top State: {pieData[0]?.name} ({pieData[0]?.value} contracts)
                           </Typography>
@@ -484,9 +586,9 @@ export default function Dashboard() {
                   </Card>
                 </Grid>
 
-                <Grid item xs={12} md={4}>
-                  <Card sx={{ p: 3, height: 500 }}>
-                    <Box sx={{ mb: 2 }}>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 4, height: 550 }}>
+                    <Box sx={{ mb: 3 }}>
                       <Typography variant="h6" gutterBottom>
                         Contract Value by State
                       </Typography>
@@ -499,10 +601,10 @@ export default function Dashboard() {
                       flexDirection="column" 
                       alignItems="center" 
                       sx={{ 
-                        height: 380,
+                        height: 430,
                         overflow: 'visible',
-                        padding: '20px',
-                        margin: '-10px'
+                        padding: '30px',
+                        margin: '-15px'
                       }}
                     >
                       <Box sx={{ 
@@ -512,14 +614,14 @@ export default function Dashboard() {
                         justifyContent: 'center',
                         overflow: 'visible'
                       }}>
-                        <PieChart width={400} height={350} margin={{ top: 20, right: 50, bottom: 60, left: 50 }}>
+                        <PieChart width={500} height={400} margin={{ top: 30, right: 80, bottom: 80, left: 80 }}>
                           <Pie 
                             data={pieValueData} 
                             dataKey="value" 
                             nameKey="name"
                             cx="50%" 
-                            cy="40%" 
-                            outerRadius={80} 
+                            cy="45%" 
+                            outerRadius={90} 
                             fill="#82ca9d" 
                             label={({ name, value, percent }) => 
                               `${name}: $${value}M (${(percent * 100).toFixed(1)}%)`
@@ -541,50 +643,19 @@ export default function Dashboard() {
                           />
                           <Legend 
                             verticalAlign="bottom" 
-                            height={50}
+                            height={60}
                             formatter={(value) => `${value}`}
-                            wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
+                            wrapperStyle={{ fontSize: '12px', paddingTop: '15px' }}
                           />
                         </PieChart>
                       </Box>
                       {pieValueData.length > 0 && (
-                        <Box sx={{ mt: 1, textAlign: 'center' }}>
+                        <Box sx={{ mt: 2, textAlign: 'center' }}>
                           <Typography variant="caption" color="text.secondary">
                             Highest Value: {pieValueData[0]?.name} (${pieValueData[0]?.value}M)
                           </Typography>
                         </Box>
                       )}
-                    </Box>
-                  </Card>
-                </Grid>
-
-                <Grid item xs={12} md={4}>
-                  <Card sx={{ p: 3, height: 500, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                    <Box sx={{ mb: 3 }}>
-                      <Typography variant="h6" gutterBottom align="center">
-                        System Health Score
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" align="center">
-                        Overall system health based on data quality, API response times, and error rates.
-                      </Typography>
-                    </Box>
-                    <Box display="flex" flexDirection="column" alignItems="center" sx={{ flexGrow: 1, justifyContent: 'center' }}>
-                      <Gauge 
-                        value={error ? 30 : 85} 
-                        valueMin={0} 
-                        valueMax={100}
-                        text={({ value }) => `${value}%`}
-                        width={200}
-                        height={200}
-                      />
-                      <Box sx={{ mt: 3, textAlign: 'center' }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Status: {error ? 'Degraded' : 'Healthy'}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          Last updated: {new Date().toLocaleTimeString()}
-                        </Typography>
-                      </Box>
                     </Box>
                   </Card>
                 </Grid>
@@ -614,7 +685,7 @@ export default function Dashboard() {
                 </Grid>
               </Grid>
 
-              {/* Bottom Row: Data Tables and Statistics */}
+              {/* Fifth Row: Data Tables and Statistics */}
               <Grid container spacing={3}>
                 {/* Left Section - Company Database */}
                 <Grid item xs={12} lg={8}>
