@@ -3,7 +3,6 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.db
 *.sqlite3
 
 # Virtual Environment
@@ -52,9 +51,6 @@ pytest.ini
 # Dockerfile variants (covering common filename casing)
 dockerfile
 Dockerfile
-
-# Root HTML entry that may be generated for demos
-index.html
 
 # Type checker and linter caches
 .mypy_cache/

@@ -24,21 +24,34 @@ The primary goal of this capstone is to **build and present a working prototype 
 Your final submission must include the following components. You will use AI assistance to generate and refine each of these artifacts.
 
 * **Documentation:**
-    * `Product Requirements Document (PRD)` generated from a high-level idea.
-    * `Architecture Document` including auto-generated UML diagrams (e.g., Component or Sequence diagrams).
-    * `Architecture Decision Records (ADR)` including auto-generated technical decisions with their justifications.
+   Created convisoft.ipynb to produce all the artifacts below.
+   - [x] `Product Requirements Document (PRD)` generated from a high-level idea.
+      - [x] Artifact Produced: convisoft_prd.md
+   - [x] `Architecture Document` including auto-generated UML diagrams (e.g., Component or Sequence diagrams).
+      - [x] Produced following Artifact:
+         - [x] convisoft_architecture.md
+         - [x] convisoft_context_diagram.png
+         - [x] convisoft_erd_diagram.png
+         - [x] convisoft_sequence_diagram.png
+   - [x] `Architecture Decision Records (ADR)` including auto-generated technical decisions with their justifications.
+      - [x] Artifact Produced: convisoft_adr.md
 * **Backend Application:**
-    * A complete REST API project using **Python and FastAPI**.
-    * An AI-generated database schema (e.g., `schema.sql`).
-    * A suite of **unit tests** generated with AI assistance.
-    * A report or list of identified **security vulnerabilities**.
+   - [x] A complete REST API project using **Python and FastAPI**.
+      - [x] Create API framework (in memory API for concept test)
+      - [x] Wire to database
+   - [x] An AI-generated database schema (e.g., `schema.sql`).
+   - [x] A suite of **unit tests** generated with AI assistance.
+   - [ ] A report or list of identified **security vulnerabilities**.
 * **Frontend Application:**
-    * A **React** frontend that interacts with your backend API.
-    * At least one key component generated from a **design screenshot or mockup**.
+   - [ ] A **React** frontend that interacts with your backend API.
+      - [x] Front end framework
+      - [ ] wire to backend
+      - [ ] display graphs 
+   - [x] At least one key component generated from a **design screenshot or mockup**.
 * **Final Presentation:**
-    * A **10-15 minute presentation** summarizing your project.
-    * A **live demo** of your fully working front-end and back-end application.
+   - [ ] A **10-15 minute presentation** summarizing your project.
+   - [ ] A **live demo** of your fully working front-end and back-end application.
 * **AI Code:**
-    * A **ipynb or py file(s)** containing the code you used to generate your artifacts.
+   - [ ] A **ipynb or py file(s)** containing the code you used to generate your artifacts.
 
 ---
