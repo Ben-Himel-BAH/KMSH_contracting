@@ -1,4 +1,5 @@
-# Architecture Decision Records (ADR)  
+# Contracting Visualization Software:  Architecture Decision Records (ADRs)
+
 **System**: Contracting Visualization Software  
 **Date**: 2024-06  
 **Version**: 1.0
@@ -7,17 +8,25 @@
 
 ## Table of Contents
 
-1. [Personas](#personas)  
-2. [User Stories](#user-stories)  
-3. [Technical Decision Table](#technical-decision-table)  
-4. [ADR-001: Framework Choice](#adr-001-framework-choice)  
-5. [ADR-002: ML Model Baseline](#adr-002-ml-model-baseline)  
-6. [ADR-003: Feature Engineering](#adr-003-feature-engineering)  
-7. [ADR-004: Database](#adr-004-database)  
-8. [ADR-005: Security](#adr-005-security)  
-9. [ADR-006: Observability](#adr-006-observability)  
-10. [ADR-007: Model Transparency](#adr-007-model-transparency)  
-11. [ADR-008: Awards API Design](#adr-008-awards-api-design)  
+1. [System Description](#system-description)
+2. [Personas](#personas)  
+3. [User Stories](#user-stories)  
+4. [Technical Decision Table](#technical-decision-table)  
+5. [ADR-001: Framework Choice](#adr-001-framework-choice)  
+6. [ADR-002: ML Model Baseline](#adr-002-ml-model-baseline)  
+7. [ADR-003: Feature Engineering](#adr-003-feature-engineering)  
+8. [ADR-004: Database](#adr-004-database)  
+9. [ADR-005: Security](#adr-005-security)  
+10. [ADR-006: Observability](#adr-006-observability)  
+11. [ADR-007: Model Transparency](#adr-007-model-transparency)  
+12. [ADR-008: Awards API Design](#adr-008-awards-api-design)
+13. [Summary](#summary)
+
+---
+
+## System Description
+
+Contracting Visualization Software is an AI-powered RESTful service application designed to help contracting companies view and explore historical data of contracts awarded by the US government through an insightful and powerful dashboard with various visualizations. The application enables users to analyze trends and access contract details. Its primary focus is on data exploration, visualization, and reporting to support strategic decision-making based on awarded contract data.
 
 ---
 
@@ -368,14 +377,22 @@ APIs must:
 
 ---
 
-# Summary
+## Summary
 
-These decisions align strictly with the PRD and ensure the Contracting Visualization Software is:  
-- **Secure and compliant** (NIST/FISMA, RBAC, encryption, audit)  
-- **Fast and scalable** (FastAPI, PostgreSQL, async, cloud-managed)  
-- **AI-powered and explainable** (scikit-learn, SHAP/LIME)  
-- **User-centric** (role-based APIs, clear error handling, observability)  
-- **Ready for future enhancements** (cloud, modular, extensible)
+### Key Decisions Made
+
+- **Framework Choice:** Django for backend development.
+- **ML Model Baseline:** Scikit-learn for initial AI insights.
+- **Feature Engineering:** Pandas for data manipulation.
+- **Database:** PostgreSQL for complex queries and scalability.
+- **Security:** JWT-based authentication and RBAC for secure access.
+- **Observability:** Prometheus and Grafana for monitoring and visualization.
+- **Model Transparency:** LIME for AI model interpretability.
+- **Awards API Design:** RESTful API with comprehensive filtering and pagination.
+
+### Overall Architecture Overview
+
+The architecture of the Contracting Visualization Software is designed to provide a secure, scalable, and feature-rich platform for exploring and analyzing US government contract data. The use of Django as the backend framework ensures rapid development and integration capabilities, while PostgreSQL supports complex queries and data integrity. AI insights are powered by Scikit-learn, with LIME providing model transparency. Security is enforced through JWT-based authentication and RBAC, and observability is maintained with Prometheus and Grafana. The RESTful API design ensures flexible data access and integration, aligning with the system's goals and requirements.
 
 ---
 
