@@ -12,7 +12,7 @@
 2. [Personas](#personas)  
 3. [User Stories](#user-stories)  
 4. [Technical Decision Table](#technical-decision-table)
-5  [Architecture Decision Records (ADR)](#architecture-decision-records-adr)
+5.  [Architecture Decision Records (ADR)](#architecture-decision-records-adr)
    - [ADR-001: Framework Choice](#adr-001-framework-choice)  
    - [ADR-002: ML Model Baseline](#adr-002-ml-model-baseline)  
    - [ADR-003: Feature Engineering](#adr-003-feature-engineering)  
