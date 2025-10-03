@@ -1,6 +1,6 @@
 # Security Vulnerability Assessment Report
 
-**Generated:** 2025-10-03 10:36:38  
+**Generated:** 2025-10-03 14:02:22  
 **Scanner:** Software Vulnerability Assessment Agent  
 **Project:** KMSH_contracting  
 
@@ -12,11 +12,13 @@ This report contains the results of an automated security vulnerability assessme
 
 ### Scan Overview
 - **Files Scanned:** 19
-- **Total Vulnerabilities Found:** 31
-- **Scan Type:** Pattern-Based Only
+- **Total Vulnerabilities Found:** 40
+- **Scan Type:** AI-Enhanced + Pattern-Based
 
 ### Vulnerability Breakdown by Severity
-- **HIGH:** 31 🟠
+- **HIGH:** 32 🟠
+- **MEDIUM:** 4 🟡
+- **LOW:** 4 🟢
 
 ---
 
@@ -105,6 +107,36 @@ f"Audio file not found at {audio_path}",
 
 ---
 
+#### 3. 🟡 MEDIUM - Ai Detected Input Validation Issue
+
+**Description:** The function `transcribe_audio` and its asynchronous counterpart `async_transcribe_audio` rely on the `audio_path` argument, which is used directly in `os.path.exists` without validation or sanitization. If this code were part of a web application, it could potentially be vulnerable to path traversal attacks if attackers can control the `audio_path`.
+
+**Location:** Line 17
+
+**Code:**
+```python
+AI-detected vulnerability
+```
+
+**Recommendation:** Validate and sanitize the `audio_path` input to ensure it does not contain unexpected or malicious path components. Consider using libraries like `os.path.abspath` and `os.path.normpath` to normalize paths and verify them against allowed directories.
+
+---
+
+#### 4. 🟢 LOW - Ai Detected Error Handling
+
+**Description:** The error messages in the `ProviderOperationError` reveal specific details about the internal workings of the application, such as the model name and whether a file was found. This could potentially aid an attacker in crafting more targeted attacks.
+
+**Location:** Line 22
+
+**Code:**
+```python
+AI-detected vulnerability
+```
+
+**Recommendation:** Ensure that error messages are generalized and do not reveal sensitive information about the system or its configuration. Consider logging detailed errors internally, but provide users with non-specific error messages.
+
+---
+
 ### 📁 errors.py
 
 **File Path:** `c:\Users\labadmin\Documents\repo\KMSH_contracting\utils\errors.py`
@@ -121,6 +153,21 @@ super().__init__(f"[{provider}:{model}] {operation} error: {message}")
 ```
 
 **Pattern Match:** `f"[{provider}:{model}] {operation} error: {message}"`
+
+---
+
+#### 2. 🟢 LOW - Ai Detected Error Handling
+
+**Description:** The exception messages in the code could potentially reveal sensitive information about the internal logic and state of the application if they are logged or exposed to users. This could aid an attacker in understanding the system for further exploitation.
+
+**Location:** Line 24
+
+**Code:**
+```python
+AI-detected vulnerability
+```
+
+**Recommendation:** Ensure that exception messages are not directly exposed to end users. Instead, log detailed messages internally and provide generic error messages to users.
 
 ---
 
@@ -380,6 +427,66 @@ message = f"PlantUML rendering failed: {exc}"
 
 ---
 
+#### 6. 🟠 HIGH - Ai Detected Injection Vulnerability
+
+**Description:** The code instantiates a PlantUML client that could potentially interact with a server URL. If the server URL is constructed using untrusted input, it could lead to server-side request forgery (SSRF) or other injection vulnerabilities if the PlantUML server processes crafted input.
+
+**Location:** Line 18
+
+**Code:**
+```python
+AI-detected vulnerability
+```
+
+**Recommendation:** Ensure that the server URL is validated against a whitelist of trusted domains and sanitize any input used to construct the URL.
+
+---
+
+#### 7. 🟡 MEDIUM - Ai Detected Error Handling
+
+**Description:** The error handling in the code reveals specific exceptions and stack traces which could be leveraged by an attacker to understand the application's internal workings.
+
+**Location:** Line 51
+
+**Code:**
+```python
+AI-detected vulnerability
+```
+
+**Recommendation:** Avoid exposing detailed exception messages and stack traces in production environments. Log detailed information securely and present generic error messages to the users.
+
+---
+
+#### 8. 🟡 MEDIUM - Ai Detected Input Validation
+
+**Description:** The input 'diagram_source' is required to be a non-empty string, but the content is not sanitized or validated. Malicious UML definitions could potentially exploit vulnerabilities in the PlantUML server.
+
+**Location:** Line 36
+
+**Code:**
+```python
+AI-detected vulnerability
+```
+
+**Recommendation:** Implement strict input validation and sanitization to ensure 'diagram_source' only contains valid UML definitions.
+
+---
+
+#### 9. 🟢 LOW - Ai Detected Security Misconfiguration
+
+**Description:** The default PlantUML server URL is hardcoded to a public server. This might not be suitable for environments with sensitive data, as it could expose internal diagrams to an external server.
+
+**Location:** Line 13
+
+**Code:**
+```python
+AI-detected vulnerability
+```
+
+**Recommendation:** Consider configuring the PlantUML server URL through a secure configuration management system and avoid using a public server for sensitive data.
+
+---
+
 ### 📁 rate_limit.py
 
 **File Path:** `c:\Users\labadmin\Documents\repo\KMSH_contracting\utils\rate_limit.py`
@@ -411,6 +518,36 @@ key = f"{provider}:{api_key}:{model_name}"
 ```
 
 **Pattern Match:** `f"{provider}:{api_key}:{model_name}"`
+
+---
+
+#### 3. 🟡 MEDIUM - Ai Detected Sensitive Data Exposure
+
+**Description:** The code uses environment variables to retrieve rate limits, which may include sensitive information such as API keys. If these environment variables are not secured properly, they could be exposed.
+
+**Location:** Line 33
+
+**Code:**
+```python
+AI-detected vulnerability
+```
+
+**Recommendation:** Ensure that environment variables are stored securely and access is restricted to only authorized users. Consider using a secrets management tool to handle sensitive data.
+
+---
+
+#### 4. 🟢 LOW - Ai Detected Error Handling
+
+**Description:** The logging of rate limit exceed events includes potentially sensitive information such as the provider and model name. If logs are not protected, this could lead to information disclosure.
+
+**Location:** Line 56
+
+**Code:**
+```python
+AI-detected vulnerability
+```
+
+**Recommendation:** Ensure that logs are stored securely and access to them is restricted. Consider sanitizing log messages to avoid including sensitive information.
 
 ---
 
@@ -528,6 +665,38 @@ image_url = f"data:{mime_type};base64,{image_base64}"
 ```
 
 **Pattern Match:** `f"data:{mime_type};base64,{image_base64}"`
+
+---
+
+## ⚙️ Configuration Security Issues
+
+### 🔴 .env - CRITICAL
+
+**Issue Type:** Hardcoded credentials
+
+**Description:** The file contains hardcoded API keys for various services including Tavily, OpenAI, HUGGINGFACE, Google, and Anthropic.
+
+**Recommendation:** Store API keys in a secure vault or environment variable management tool. Avoid committing them into source code repositories.
+
+---
+
+### 🟠 .env - HIGH
+
+**Issue Type:** Insecure default settings
+
+**Description:** The presence of hardcoded keys might indicate reliance on default or insecure settings.
+
+**Recommendation:** Ensure that secure practices are followed for managing credentials and configurations. Regularly rotate keys and use tools like HashiCorp Vault, AWS Secrets Manager, or equivalent for secure storage.
+
+---
+
+### 🟡 .env - MEDIUM
+
+**Issue Type:** Overly permissive configurations
+
+**Description:** There is a lack of information on the scope or permissions associated with the API keys. They might be overly permissive.
+
+**Recommendation:** Audit the permissions associated with each API key and ensure they follow the principle of least privilege.
 
 ---
 
